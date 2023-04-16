@@ -9,7 +9,7 @@ clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\Thorlabs.MotionControl.G
 clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\ThorLabs.MotionControl.IntegratedStepperMotorsCLI.dll")
 
 # Import functions from dlls. 
-# from Thorlabs.MotionControl import DeviceManagerCLI
+from Thorlabs.MotionControl import DeviceManagerCLI
 from Thorlabs.MotionControl.DeviceManagerCLI import *
 from Thorlabs.MotionControl.GenericMotorCLI import *
 from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import *
@@ -30,7 +30,7 @@ rtn = device.IsConnected
 print(rtn)
 # Ensure that the device settings have been initialized.
 if not device.IsSettingsInitialized():
-    device.WaitForSettingsInitialized(10000)  # 10 second timeout.
+    device.WaitForSettingsInitialized(3000)  # 10 second timeout.
     assert device.IsSettingsInitialized() is True
 
 # Start polling loop and enable device.
