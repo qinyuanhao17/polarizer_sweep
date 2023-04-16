@@ -254,7 +254,7 @@ class Ui_Form(object):
         self.horizontalLayout_4 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_4.setObjectName("horizontalLayout_4")
         self.position_view = QtWidgets.QLCDNumber(self.rot_a)
-        self.position_view.setDigitCount(8)
+        self.position_view.setDigitCount(9)
         self.position_view.setMode(QtWidgets.QLCDNumber.Dec)
         self.position_view.setSegmentStyle(QtWidgets.QLCDNumber.Filled)
         self.position_view.setObjectName("position_view")

@@ -442,7 +442,7 @@ QPushButton:pressed {
                 <item>
                  <widget class="QLCDNumber" name="position_view">
                   <property name="digitCount">
-                   <number>8</number>
+                   <number>9</number>
                   </property>
                   <property name="mode">
                    <enum>QLCDNumber::Dec</enum>
