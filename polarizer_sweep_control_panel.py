@@ -209,14 +209,11 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.setCursor(QCursor(Qt.ArrowCursor))
     
     def closeEvent(self, event):
-        reply = QMessageBox.question(self, u'Quit', u'Shut down?', QMessageBox.Yes, QMessageBox.No)
-        # QtWidgets.QMessageBox.question(self,u'弹窗名',u'弹窗内容',选项1,选项2)
-        if reply == QMessageBox.Yes:
-            self.device_a.StopPolling()
-            self.device_a.Disconnect(True)
-            event.accept()  # 关闭窗口
-        else:
-            event.ignore()  # 忽视点击X事件
+        
+        
+        self.device_a.StopPolling()
+        self.device_a.Disconnect(True)
+
 if __name__ == '__main__':
 
     app = QApplication(sys.argv)
