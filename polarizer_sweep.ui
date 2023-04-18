@@ -349,8 +349,8 @@ QPushButton:pressed {
              <rect>
               <x>10</x>
               <y>20</y>
-              <width>562</width>
-              <height>490</height>
+              <width>541</width>
+              <height>601</height>
              </rect>
             </property>
             <property name="styleSheet">
@@ -400,7 +400,7 @@ QPushButton:pressed {
                 <item>
                  <widget class="QLabel" name="label_3">
                   <property name="text">
-                   <string>Serial Num:</string>
+                   <string>Serial Number:</string>
                   </property>
                  </widget>
                 </item>
@@ -758,7 +758,7 @@ QPushButton:pressed {
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>526</width>
+                      <width>505</width>
                       <height>85</height>
                      </rect>
                     </property>
@@ -772,6 +772,98 @@ QPushButton:pressed {
                      </item>
                     </layout>
                    </widget>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox_2">
+                <property name="title">
+                 <string>Polarization Sweep</string>
+                </property>
+                <layout class="QGridLayout" name="gridLayout">
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>StartPos:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="1" colspan="2">
+                  <widget class="QDoubleSpinBox" name="rotator_a_startpos_spbx"/>
+                 </item>
+                 <item row="0" column="3">
+                  <widget class="QLabel" name="label_9">
+                   <property name="text">
+                    <string>StopPos:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="4">
+                  <widget class="QDoubleSpinBox" name="rotator_a_stoppos_spbx"/>
+                 </item>
+                 <item row="0" column="5">
+                  <widget class="QLabel" name="label_10">
+                   <property name="text">
+                    <string>Step:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="6">
+                  <widget class="QDoubleSpinBox" name="rotator_a_sweepstep_spbx"/>
+                 </item>
+                 <item row="0" column="7">
+                  <widget class="QLabel" name="rotator_a_frames_spbx">
+                   <property name="text">
+                    <string>Frames:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="8">
+                  <widget class="QSpinBox" name="spinBox"/>
+                 </item>
+                 <item row="1" column="2" colspan="7">
+                  <widget class="QProgressBar" name="rotato_a_progressbar">
+                   <property name="styleSheet">
+                    <string notr="true">QProgressBar {
+    border: 2px solid grey;
+    background-color: #f0f0f0;
+    padding: 1px;
+    height: 16px;
+}
+
+QProgressBar::chunk {
+    background-color: #00bcd4;
+    width: 10px;
+}</string>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                   <property name="textDirection">
+                    <enum>QProgressBar::TopToBottom</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0" colspan="2">
+                  <widget class="QPushButton" name="rotator_a_sweep_start_btn">
+                   <property name="text">
+                    <string>Start</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="resources.qrc">
+                     <normaloff>:/my_icons/images/icons/play.svg</normaloff>:/my_icons/images/icons/play.svg</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>20</width>
+                     <height>30</height>
+                    </size>
+                   </property>
                   </widget>
                  </item>
                 </layout>

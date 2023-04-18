@@ -53,6 +53,10 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.rotator_a_signal()
         # init rotator A info ui
         self.rotator_a_info_ui()
+
+        # connect and set when boot
+        self.connect_thread()
+        # self.rotator_a_velocity_acceleration_step_set()
         
     '''Set Rotator A'''
     def rotator_a_signal(self):
@@ -73,6 +77,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.disconnect_btn.clicked.connect(self.rotator_a_disconnect)
         # move to signal
         self.move_tbtn.clicked.connect(self.rotator_a_move_to_position)
+        self.rot_a_ledit.returnPressed.connect(self.rotator_a_move_to_position)
         # stop signal
         self.stop_tbtn.clicked.connect(self.rotator_a_stop)
         # drive signal
@@ -83,6 +88,12 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.rotator_a_backward_btn.pressed.connect(self.rotator_a_continuous_backward_pressed)
         self.rotator_a_forward_btn.released.connect(self.rotator_a_continuous_released)
         self.rotator_a_backward_btn.released.connect(self.rotator_a_continuous_released)
+    def connect_thread(self):
+        self.boot_thread = Thread(
+            target=self.rotator_connect
+        )
+        self.boot_thread.start()
+
     def rotator_connect(self):
         serial_number = self.serial_cbox.currentText().strip('S/N ')
         # Init rotator A self.device_a
@@ -163,9 +174,10 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
     def rotator_a_stop(self):
         self.device_a.StopImmediate()
     def rotator_a_velocity_acceleration_step_set(self):
+        
         new_velocity = Decimal(int(self.rotator_a_velocity_spbx.text()))
         new_acceleration = Decimal(int(self.rotator_a_acceleration_spbx.text()))
-        new_step = Decimal(int(self.rotator_a_step_spbx.text()))
+        new_step = Decimal(float(self.rotator_a_step_spbx.text()))
         velPars = self.device_a.GetVelocityParams()
         velPars.MaxVelocity = new_velocity
         velPars.Acceleration = new_acceleration
@@ -184,7 +196,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             pass
         else:
             if self.rotator_a_stp_rdbtn.isChecked():
-                step = Decimal(int(self.rotator_a_step_spbx.text()))
+                step = Decimal(float(self.rotator_a_step_spbx.text()))
                 current_position = self.device_a.Position
                 new_position = current_position + step
                 workDone = self.device_a.InitializeWaitHandler()
@@ -197,7 +209,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             pass
         else:
             if self.rotator_a_stp_rdbtn.isChecked():
-                step = Decimal(int(self.rotator_a_step_spbx.text()))
+                step = Decimal(float(self.rotator_a_step_spbx.text()))
                 current_position = self.device_a.Position
                 new_position = current_position - step
                 workDone = self.device_a.InitializeWaitHandler()
