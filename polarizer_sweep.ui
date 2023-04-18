@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1602</width>
-    <height>929</height>
+    <width>1868</width>
+    <height>1103</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,7 +55,7 @@ QComboBox{
 }
 </string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_19" stretch="1">
+  <layout class="QVBoxLayout" name="verticalLayout_19" stretch="0">
    <item>
     <widget class="QWidget" name="mainwidget" native="true">
      <property name="styleSheet">
@@ -349,8 +349,8 @@ QPushButton:pressed {
              <rect>
               <x>10</x>
               <y>20</y>
-              <width>471</width>
-              <height>421</height>
+              <width>562</width>
+              <height>490</height>
              </rect>
             </property>
             <property name="styleSheet">
@@ -392,7 +392,7 @@ QPushButton:pressed {
             </property>
             <widget class="QWidget" name="rot_a">
              <attribute name="title">
-              <string>Rotator A</string>
+              <string>Polarization</string>
              </attribute>
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
@@ -406,6 +406,11 @@ QPushButton:pressed {
                 </item>
                 <item>
                  <widget class="QComboBox" name="serial_cbox">
+                  <item>
+                   <property name="text">
+                    <string>S/N 55001052</string>
+                   </property>
+                  </item>
                   <item>
                    <property name="text">
                     <string>S/N 55342484</string>
@@ -438,87 +443,165 @@ QPushButton:pressed {
                </layout>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="5,1">
-                <item>
-                 <widget class="QLCDNumber" name="position_view">
-                  <property name="digitCount">
-                   <number>8</number>
-                  </property>
-                  <property name="mode">
-                   <enum>QLCDNumber::Dec</enum>
-                  </property>
-                  <property name="segmentStyle">
-                   <enum>QLCDNumber::Filled</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <layout class="QVBoxLayout" name="verticalLayout_2">
-                  <item>
-                   <widget class="QPushButton" name="inc_btn">
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="resources.qrc">
-                      <normaloff>:/my_icons/images/icons/up_arrow.svg</normaloff>:/my_icons/images/icons/up_arrow.svg</iconset>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>50</width>
-                      <height>50</height>
-                     </size>
-                    </property>
-                    <property name="flat">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="dec_btn">
-                    <property name="text">
-                     <string/>
-                    </property>
-                    <property name="icon">
-                     <iconset resource="resources.qrc">
-                      <normaloff>:/my_icons/images/icons/down_arrow.svg</normaloff>:/my_icons/images/icons/down_arrow.svg</iconset>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>50</width>
-                      <height>50</height>
-                     </size>
-                    </property>
-                    <property name="flat">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QToolButton" name="jog_tbtn">
-                    <property name="text">
-                     <string>Jog</string>
-                    </property>
-                    <property name="iconSize">
-                     <size>
-                      <width>40</width>
-                      <height>40</height>
-                     </size>
-                    </property>
-                    <property name="popupMode">
-                     <enum>QToolButton::MenuButtonPopup</enum>
-                    </property>
-                    <property name="toolButtonStyle">
-                     <enum>Qt::ToolButtonTextUnderIcon</enum>
-                    </property>
-                    <property name="arrowType">
-                     <enum>Qt::NoArrow</enum>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </item>
-               </layout>
+               <widget class="QGroupBox" name="groupBox">
+                <property name="title">
+                 <string>Drive</string>
+                </property>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
+                 <item>
+                  <layout class="QVBoxLayout" name="verticalLayout_7" stretch="3,1">
+                   <item>
+                    <widget class="QLCDNumber" name="position_view">
+                     <property name="digitCount">
+                      <number>8</number>
+                     </property>
+                     <property name="mode">
+                      <enum>QLCDNumber::Dec</enum>
+                     </property>
+                     <property name="segmentStyle">
+                      <enum>QLCDNumber::Filled</enum>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_8">
+                     <item>
+                      <widget class="QLabel" name="label_5">
+                       <property name="text">
+                        <string>Velocity: </string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="rotator_a_velocity_spbx">
+                       <property name="value">
+                        <number>10</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_7">
+                       <property name="text">
+                        <string>Acceleration: </string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QSpinBox" name="rotator_a_acceleration_spbx">
+                       <property name="value">
+                        <number>15</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="label_8">
+                       <property name="text">
+                        <string>Step:</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QDoubleSpinBox" name="rotator_a_step_spbx">
+                       <property name="alignment">
+                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                       </property>
+                       <property name="stepType">
+                        <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                       </property>
+                       <property name="value">
+                        <double>5.000000000000000</double>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="rotator_a_set_btn">
+                       <property name="text">
+                        <string>Set</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1,2,2">
+                   <item>
+                    <widget class="QRadioButton" name="rotator_a_cont_rdbtn">
+                     <property name="text">
+                      <string>Continuous</string>
+                     </property>
+                     <property name="checked">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QRadioButton" name="rotator_a_stp_rdbtn">
+                     <property name="text">
+                      <string>Stepping</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="rotator_a_forward_btn">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="resources.qrc">
+                       <normaloff>:/my_icons/images/icons/up_arrow.svg</normaloff>:/my_icons/images/icons/up_arrow.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>50</width>
+                       <height>50</height>
+                      </size>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QPushButton" name="rotator_a_backward_btn">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="resources.qrc">
+                       <normaloff>:/my_icons/images/icons/down_arrow.svg</normaloff>:/my_icons/images/icons/down_arrow.svg</iconset>
+                     </property>
+                     <property name="iconSize">
+                      <size>
+                       <width>50</width>
+                       <height>50</height>
+                      </size>
+                     </property>
+                     <property name="flat">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1,1,1">
@@ -541,7 +624,7 @@ QPushButton:pressed {
                  <number>5</number>
                 </property>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit">
+                 <widget class="QLineEdit" name="rot_a_ledit">
                   <property name="sizePolicy">
                    <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                     <horstretch>0</horstretch>
@@ -644,7 +727,7 @@ QPushButton:pressed {
               <item>
                <widget class="QGroupBox" name="groupBox_7">
                 <property name="title">
-                 <string>K10CR1/M Setup Info</string>
+                 <string>K10CR1/M (Rotator A) Setup Info</string>
                 </property>
                 <layout class="QGridLayout" name="gridLayout_4">
                  <property name="leftMargin">
@@ -675,7 +758,7 @@ QPushButton:pressed {
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>435</width>
+                      <width>526</width>
                       <height>85</height>
                      </rect>
                     </property>
@@ -698,9 +781,9 @@ QPushButton:pressed {
             </widget>
             <widget class="QWidget" name="rot_b">
              <attribute name="title">
-              <string>Rotator B</string>
+              <string>Power</string>
              </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_18"/>
+             <layout class="QVBoxLayout" name="verticalLayout_6"/>
             </widget>
            </widget>
           </widget>

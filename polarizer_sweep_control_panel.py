@@ -18,6 +18,7 @@ clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\ThorLabs.MotionControl.I
 from Thorlabs.MotionControl import DeviceManagerCLI
 from Thorlabs.MotionControl.DeviceManagerCLI import *
 from Thorlabs.MotionControl.GenericMotorCLI import *
+from Thorlabs.MotionControl.GenericMotorCLI import MotorDirection
 from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import *
 from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import CageRotator
 from System import Decimal 
@@ -70,6 +71,18 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.home_tbtn.clicked.connect(self.rotator_a_home)
         # Disconnect button signal
         self.disconnect_btn.clicked.connect(self.rotator_a_disconnect)
+        # move to signal
+        self.move_tbtn.clicked.connect(self.rotator_a_move_to_position)
+        # stop signal
+        self.stop_tbtn.clicked.connect(self.rotator_a_stop)
+        # drive signal
+        self.rotator_a_set_btn.clicked.connect(self.rotator_a_velocity_acceleration_step_set)
+        self.rotator_a_forward_btn.clicked.connect(self.rotator_a_step_forward)
+        self.rotator_a_backward_btn.clicked.connect(self.rotator_a_step_backward)
+        self.rotator_a_forward_btn.pressed.connect(self.rotator_a_continuous_forward_pressed)
+        self.rotator_a_backward_btn.pressed.connect(self.rotator_a_continuous_backward_pressed)
+        self.rotator_a_forward_btn.released.connect(self.rotator_a_continuous_released)
+        self.rotator_a_backward_btn.released.connect(self.rotator_a_continuous_released)
     def rotator_connect(self):
         serial_number = self.serial_cbox.currentText().strip('S/N ')
         # Init rotator A self.device_a
@@ -137,6 +150,80 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                 time.sleep(0.2)
             else:
                 break
+    def rotator_a_move_to_position(self):
+        
+        velPars = self.device_a.GetVelocityParams()
+        velPars.MaxVelocity = Decimal(15)
+        self.device_a.SetVelocityParams(velPars)
+
+        new_position = Decimal(float(self.rot_a_ledit.text()))
+        workDone = self.device_a.InitializeWaitHandler()
+        self.device_a.MoveTo(new_position, workDone)
+        self.rot_a_ledit.clear()
+    def rotator_a_stop(self):
+        self.device_a.StopImmediate()
+    def rotator_a_velocity_acceleration_step_set(self):
+        new_velocity = Decimal(int(self.rotator_a_velocity_spbx.text()))
+        new_acceleration = Decimal(int(self.rotator_a_acceleration_spbx.text()))
+        new_step = Decimal(int(self.rotator_a_step_spbx.text()))
+        velPars = self.device_a.GetVelocityParams()
+        velPars.MaxVelocity = new_velocity
+        velPars.Acceleration = new_acceleration
+        
+        self.device_a.SetVelocityParams(velPars)
+        
+        self.device_a.SetVelocityParams(velPars)
+
+
+        self.rotator_a_info.emit('Velocity: {}'.format(new_velocity))
+        self.rotator_a_info.emit('Acceleration: {}'.format(new_acceleration))
+        self.rotator_a_info.emit('Step: {}'.format(new_step))
+        self.rotator_a_info.emit('-'*60)
+    def rotator_a_step_forward(self):
+        if self.device_a.Status.IsInMotion:
+            pass
+        else:
+            if self.rotator_a_stp_rdbtn.isChecked():
+                step = Decimal(int(self.rotator_a_step_spbx.text()))
+                current_position = self.device_a.Position
+                new_position = current_position + step
+                workDone = self.device_a.InitializeWaitHandler()
+                self.device_a.MoveTo(new_position, workDone)
+                
+            elif self.rotator_a_cont_rdbtn.isChecked():
+                pass
+    def rotator_a_step_backward(self):
+        if self.device_a.Status.IsInMotion:
+            pass
+        else:
+            if self.rotator_a_stp_rdbtn.isChecked():
+                step = Decimal(int(self.rotator_a_step_spbx.text()))
+                current_position = self.device_a.Position
+                new_position = current_position - step
+                workDone = self.device_a.InitializeWaitHandler()
+                if float(str(new_position)) >= 0:
+                    self.device_a.MoveTo(new_position, workDone)
+                elif float(str(new_position)) < 0:
+                    new_position = Decimal(new_position+360)
+                    self.device_a.MoveTo(new_position, workDone)
+                
+            elif self.rotator_a_cont_rdbtn.isChecked():
+                pass
+    def rotator_a_continuous_forward_pressed(self):
+        if self.rotator_a_stp_rdbtn.isChecked():
+            pass
+        elif self.rotator_a_cont_rdbtn.isChecked():
+            new_direction_forward = MotorDirection.Forward 
+            self.device_a.MoveContinuous(MotorDirection.Forward)
+    def rotator_a_continuous_backward_pressed(self):
+        if self.rotator_a_stp_rdbtn.isChecked():
+            pass
+        elif self.rotator_a_cont_rdbtn.isChecked():
+            new_direction_forward = MotorDirection.Backward 
+            self.device_a.MoveContinuous(MotorDirection.Backward)
+    
+    def rotator_a_continuous_released(self):
+        self.device_a.StopImmediate()
     '''Set Rotator A info ui'''
     def rotator_a_info_ui(self):
 
@@ -210,7 +297,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
     
     def closeEvent(self, event):
         
-        
+        self.device_a.StopImmediate()
         self.device_a.StopPolling()
         self.device_a.Disconnect(True)
 
