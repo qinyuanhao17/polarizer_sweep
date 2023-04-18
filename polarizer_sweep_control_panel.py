@@ -2,6 +2,7 @@ import sys
 import time
 import clr
 import serial
+import nidaqmx
 
 import polarizer_sweep_ui
 from threading import Thread
