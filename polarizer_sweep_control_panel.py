@@ -127,12 +127,15 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         )
         thread.start()
     def rotator_a_home(self):
-        self.rotator_a_info.emit('Rotator A is homimg, please wait.')
-        thread = Thread(
-            target = self.rotator_a_home_thread
-        )
-        thread.start()
-        self.home_tbtn.setEnabled(False)
+        if self.device_a.Status.IsHoming:
+            pass
+        else:
+            self.rotator_a_info.emit('Rotator A is homimg, please wait.')
+            thread = Thread(
+                target = self.rotator_a_home_thread
+            )
+            thread.start()
+        
     def rotator_a_home_thread(self):
         if self.device_a.IsConnected:
             self.device_a.Home(60000)
@@ -140,7 +143,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             if self.device_a.Status.IsHomed:
                 self.rotator_a_info.emit('Rotator A is homed.')
                 self.rotator_a_info.emit('-'*60)
-                self.home_tbtn.setEnabled(True)
+                
         else:
             self.rotator_a_info.emit('Device is not connected.')
             self.rotator_a_info.emit('-'*60)
