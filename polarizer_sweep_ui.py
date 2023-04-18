@@ -447,7 +447,9 @@ class Ui_Form(object):
 "    background-color: #00bcd4;\n"
 "    width: 10px;\n"
 "}")
-        self.rotato_a_progressbar.setProperty("value", 50)
+        self.rotato_a_progressbar.setProperty("value", 0)
+        self.rotato_a_progressbar.setAlignment(QtCore.Qt.AlignCenter)
+        self.rotato_a_progressbar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
         self.rotato_a_progressbar.setObjectName("rotato_a_progressbar")
         self.gridLayout.addWidget(self.rotato_a_progressbar, 1, 2, 1, 7)
         self.rotator_a_sweep_start_btn = QtWidgets.QPushButton(self.groupBox_2)
@@ -478,7 +480,7 @@ class Ui_Form(object):
         self.label.setText(_translate("Form", "Rotater Automation"))
         self.label_6.setText(_translate("Form", "----Version 1.0 --By Qin Yuanhao"))
         self.label_3.setText(_translate("Form", "Serial Number:"))
-        self.serial_cbox.setItemText(0, _translate("Form", "S/N 55001052"))
+        self.serial_cbox.setItemText(0, _translate("Form", "S/N 55354044"))
         self.serial_cbox.setItemText(1, _translate("Form", "S/N 55342484"))
         self.connect_btn.setText(_translate("Form", "Connect"))
         self.disconnect_btn.setText(_translate("Form", "Disconnect"))

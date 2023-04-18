@@ -408,7 +408,7 @@ QPushButton:pressed {
                  <widget class="QComboBox" name="serial_cbox">
                   <item>
                    <property name="text">
-                    <string>S/N 55001052</string>
+                    <string>S/N 55354044</string>
                    </property>
                   </item>
                   <item>
