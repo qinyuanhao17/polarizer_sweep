@@ -60,6 +60,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.connect_thread()
         # self.rotator_a_velocity_acceleration_step_set()
         
+        
     '''Set Rotator A'''
     def rotator_a_signal(self):
         self.connect_btn.clicked.connect(self.rotator_connect)
@@ -93,6 +94,9 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
 
         # Polarization sweep signal
         self.rotator_a_sweep_start_btn.clicked.connect(self.polarization_sweep)
+
+        # fram calculation signal
+        self.rotator_a_calc_btn.clicked.connect(self.rotator_a_frame_calc)
     def connect_thread(self):
         self.boot_thread = Thread(
             target=self.rotator_connect
@@ -131,6 +135,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             target=self.rotator_a_position_view
         )
         thread.start()
+        
     def rotator_a_home(self):
         if self.device_a.Status.IsHoming:
             pass
@@ -253,7 +258,16 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.thread_read_write.start()
     def rotator_a_progress_bar_thread(self,msg):
         self.rotato_a_progressbar.setValue(int(msg))
+    def rotator_a_frame_calc(self):
+        a_start_position = float(self.rotator_a_startpos_spbx.text())
+        a_stop_position = float(self.rotator_a_stoppos_spbx.text())
+        a_step = float(self.rotator_a_sweepstep_spbx.text())
+        a_stime = float(self.rotator_a_stime_spbx.text())
+        tot_frame = int((a_stop_position - a_start_position)/a_step+1)
         
+        if self.device_a.IsConnected:
+            self.rotator_a_frame_spbx.setValue(tot_frame)    
+            
     def rotator_a_read_write_thread(self):
         
         a_start_position = float(self.rotator_a_startpos_spbx.text())
