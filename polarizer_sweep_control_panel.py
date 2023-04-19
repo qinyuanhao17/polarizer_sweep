@@ -266,7 +266,10 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         a_step = float(self.rotator_a_sweepstep_spbx.text())
         a_stime = float(self.rotator_a_stime_spbx.text())
         tot_frame = int((a_stop_position - a_start_position)/a_step+1)
-        
+        new_position = Decimal(a_start_position)
+        workDone = self.device_a.InitializeWaitHandler()
+        self.device_a.MoveTo(new_position, workDone)
+        time.sleep(0.5)
         if self.device_a.IsConnected:
             self.rotator_a_frame_spbx.setValue(tot_frame)    
             
@@ -277,16 +280,6 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         a_step = float(self.rotator_a_sweepstep_spbx.text())
         a_stime = float(self.rotator_a_stime_spbx.text())
         tot_frame = int((a_stop_position - a_start_position)/a_step+1)
-        
-        new_position = Decimal(a_start_position)
-        workDone = self.device_a.InitializeWaitHandler()
-        self.device_a.MoveTo(new_position, workDone)
-        time.sleep(0.5)
-        while True:
-            if self.device_a.Status.IsInMotion:
-                time.sleep(0.01)
-            else:
-                break
 
         with nidaqmx.Task() as read_task, nidaqmx.Task() as write_task:
     
