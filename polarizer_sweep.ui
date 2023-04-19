@@ -808,6 +808,9 @@ QPushButton:pressed {
                    <property name="maximum">
                     <double>360.000000000000000</double>
                    </property>
+                   <property name="stepType">
+                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                   </property>
                   </widget>
                  </item>
                  <item row="0" column="3">
@@ -822,6 +825,12 @@ QPushButton:pressed {
                    <property name="maximum">
                     <double>360.000000000000000</double>
                    </property>
+                   <property name="stepType">
+                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                   </property>
+                   <property name="value">
+                    <double>180.000000000000000</double>
+                   </property>
                   </widget>
                  </item>
                  <item row="0" column="5">
@@ -832,7 +841,14 @@ QPushButton:pressed {
                   </widget>
                  </item>
                  <item row="0" column="6">
-                  <widget class="QDoubleSpinBox" name="rotator_a_sweepstep_spbx"/>
+                  <widget class="QDoubleSpinBox" name="rotator_a_sweepstep_spbx">
+                   <property name="stepType">
+                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
                  </item>
                  <item row="0" column="7">
                   <widget class="QLabel" name="rotator_a_frames_spbx">
@@ -842,7 +858,7 @@ QPushButton:pressed {
                   </widget>
                  </item>
                  <item row="0" column="8">
-                  <widget class="QSpinBox" name="spinBox"/>
+                  <widget class="QSpinBox" name="rotator_a_frame_spbx"/>
                  </item>
                  <item row="1" column="2" colspan="7">
                   <widget class="QProgressBar" name="rotato_a_progressbar">

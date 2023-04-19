@@ -89,6 +89,9 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.rotator_a_backward_btn.pressed.connect(self.rotator_a_continuous_backward_pressed)
         self.rotator_a_forward_btn.released.connect(self.rotator_a_continuous_released)
         self.rotator_a_backward_btn.released.connect(self.rotator_a_continuous_released)
+
+        # Polarization sweep signal
+        self.rotator_a_sweep_start_btn.clicked.connect(self.polarization_sweep)
     def connect_thread(self):
         self.boot_thread = Thread(
             target=self.rotator_connect
@@ -240,6 +243,17 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
     
     def rotator_a_continuous_released(self):
         self.device_a.StopImmediate()
+    
+    ''' Polarization Sweep'''
+    def polarization_sweep(self):
+        with nidaqmx.Task() as task:
+    
+            di = task.di_channels.add_di_chan("Dev1/port0/line1")
+            while True:
+                data = task.read()
+                time.sleep(0.1)
+
+                print(data)
     '''Set Rotator A info ui'''
     def rotator_a_info_ui(self):
 
