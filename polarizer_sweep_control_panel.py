@@ -26,6 +26,7 @@ from System import Decimal
 
 class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
     rotator_a_info = pyqtSignal(str)
+    rotator_a_progress_bar_info = pyqtSignal(float)
     def __init__(self):
 
         super().__init__()
@@ -65,7 +66,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
 
         #message signal
         self.rotator_a_info.connect(self.rotator_a_slot)
-
+        self.rotator_a_progress_bar_info.connect(self.rotator_a_progress_bar_thread)
         # scroll area scrollbar signal
         self.rot_a_scroll.verticalScrollBar().rangeChanged.connect(
             lambda: self.rot_a_scroll.verticalScrollBar().setValue(
@@ -243,17 +244,68 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
     
     def rotator_a_continuous_released(self):
         self.device_a.StopImmediate()
-    
+
     ''' Polarization Sweep'''
     def polarization_sweep(self):
-        with nidaqmx.Task() as task:
-    
-            di = task.di_channels.add_di_chan("Dev1/port0/line1")
-            while True:
-                data = task.read()
-                time.sleep(0.1)
+        self.thread_read_write = Thread(
+            target= self.rotator_a_read_write_thread
+        )
+        self.thread_read_write.start()
+    def rotator_a_progress_bar_thread(self,msg):
+        self.rotato_a_progressbar.setValue(int(msg))
+        
+    def rotator_a_read_write_thread(self):
+        
+        a_start_position = float(self.rotator_a_startpos_spbx.text())
+        a_stop_position = float(self.rotator_a_stoppos_spbx.text())
+        a_step = float(self.rotator_a_sweepstep_spbx.text())
+        a_stime = float(self.rotator_a_stime_spbx.text())
+        tot_frame = int((a_stop_position - a_start_position)/a_step+1)
+        
+        new_position = Decimal(a_start_position)
+        workDone = self.device_a.InitializeWaitHandler()
+        self.device_a.MoveTo(new_position, workDone)
+        time.sleep(0.5)
+        while True:
+            if self.device_a.Status.IsInMotion:
+                time.sleep(0.01)
+            else:
+                break
 
-                print(data)
+        with nidaqmx.Task() as read_task, nidaqmx.Task() as write_task:
+    
+            di = read_task.di_channels.add_di_chan("Dev1/port0/line1")
+            do = write_task.do_channels.add_do_chan("Dev1/port0/line0")           
+            
+            i = 0
+            while i < (tot_frame+1):
+                self.rotator_a_progress_bar_info.emit(i/tot_frame*100)
+                if self.device_a.IsConnected:
+                    data = read_task.read()
+                    if  data == False:    
+                        write_task.write(True)
+                        time.sleep(0.01)
+                        write_task.write(False)
+                        time.sleep(a_stime+0.5)             
+                        self.rotator_a_info.emit('{}'.format(i))
+                        if i == 0 or i == tot_frame:
+                            pass 
+                        else:
+                            current_position = self.device_a.Position
+                            new_position = current_position + Decimal(a_step)
+                            workDone = self.device_a.InitializeWaitHandler()
+                            self.device_a.MoveTo(new_position, workDone)
+                            time.sleep(0.5)
+                            while True:
+                                if self.device_a.Status.IsInMotion:
+                                    time.sleep(0.01)
+                                else:
+                                    break                          
+                        i += 1
+                        
+                else:
+                    break            
+                                    
     '''Set Rotator A info ui'''
     def rotator_a_info_ui(self):
 

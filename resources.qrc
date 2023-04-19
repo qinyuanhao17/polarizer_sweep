@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="my_icons">
+    <file>images/icons/interrupt.svg</file>
     <file>images/icons/disconnect.svg</file>
     <file>images/icons/down_arrow.svg</file>
     <file>images/icons/up_arrow.svg</file>

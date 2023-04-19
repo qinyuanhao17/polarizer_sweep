@@ -187,7 +187,7 @@ QComboBox{
             <item>
              <widget class="QLabel" name="label_6">
               <property name="text">
-               <string>----Version 1.0 --By Qin Yuanhao</string>
+               <string>----Version 1.0</string>
               </property>
              </widget>
             </item>
@@ -347,10 +347,10 @@ QPushButton:pressed {
            <widget class="QTabWidget" name="tabWidget">
             <property name="geometry">
              <rect>
-              <x>10</x>
-              <y>20</y>
-              <width>571</width>
-              <height>601</height>
+              <x>20</x>
+              <y>30</y>
+              <width>541</width>
+              <height>621</height>
              </rect>
             </property>
             <property name="styleSheet">
@@ -738,6 +738,159 @@ QPushButton:pressed {
                </layout>
               </item>
               <item>
+               <widget class="QGroupBox" name="groupBox_2">
+                <property name="title">
+                 <string>Polarization Sweep</string>
+                </property>
+                <property name="checkable">
+                 <bool>true</bool>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+                <layout class="QGridLayout" name="gridLayout">
+                 <item row="0" column="1">
+                  <widget class="QDoubleSpinBox" name="rotator_a_startpos_spbx">
+                   <property name="maximum">
+                    <double>360.000000000000000</double>
+                   </property>
+                   <property name="stepType">
+                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="4">
+                  <widget class="QPushButton" name="rotator_a_sweep_start_btn">
+                   <property name="text">
+                    <string>  Start  </string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="resources.qrc">
+                     <normaloff>:/my_icons/images/icons/play.svg</normaloff>:/my_icons/images/icons/play.svg</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>20</width>
+                     <height>30</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="3">
+                  <widget class="QDoubleSpinBox" name="rotator_a_stoppos_spbx">
+                   <property name="maximum">
+                    <double>360.000000000000000</double>
+                   </property>
+                   <property name="stepType">
+                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                   </property>
+                   <property name="value">
+                    <double>180.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="2">
+                  <widget class="QLabel" name="label_9">
+                   <property name="text">
+                    <string>StopPos:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="1">
+                  <widget class="QSpinBox" name="rotator_a_stime_spbx">
+                   <property name="value">
+                    <number>1</number>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="0">
+                  <widget class="QLabel" name="rotator_a_frames_spbx_2">
+                   <property name="text">
+                    <string>STime:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="3">
+                  <widget class="QSpinBox" name="rotator_a_frame_spbx"/>
+                 </item>
+                 <item row="0" column="0">
+                  <widget class="QLabel" name="label_4">
+                   <property name="text">
+                    <string>StartPos:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="4">
+                  <widget class="QLabel" name="label_10">
+                   <property name="text">
+                    <string>Step:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="0" column="5">
+                  <widget class="QDoubleSpinBox" name="rotator_a_sweepstep_spbx">
+                   <property name="stepType">
+                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="2">
+                  <widget class="QLabel" name="rotator_a_frames_spbx">
+                   <property name="text">
+                    <string>Frames:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="1" column="5">
+                  <widget class="QPushButton" name="rotator_a_interrupt_btn">
+                   <property name="text">
+                    <string>Interrupt</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="resources.qrc">
+                     <normaloff>:/my_icons/images/icons/interrupt.svg</normaloff>:/my_icons/images/icons/interrupt.svg</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>20</width>
+                     <height>30</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item row="2" column="0" colspan="6">
+                  <widget class="QProgressBar" name="rotato_a_progressbar">
+                   <property name="styleSheet">
+                    <string notr="true">QProgressBar {
+    border: 2px solid grey;
+    background-color: #f0f0f0;
+    padding: 1px;
+    height: 16px;
+}
+
+QProgressBar::chunk {
+    background-color: #00bcd4;
+    width: 10px;
+}</string>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                   <property name="textDirection">
+                    <enum>QProgressBar::TopToBottom</enum>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+              <item>
                <widget class="QGroupBox" name="groupBox_7">
                 <property name="title">
                  <string>K10CR1/M (Rotator A) Setup Info</string>
@@ -771,7 +924,7 @@ QPushButton:pressed {
                      <rect>
                       <x>0</x>
                       <y>0</y>
-                      <width>535</width>
+                      <width>505</width>
                       <height>85</height>
                      </rect>
                     </property>
@@ -785,122 +938,6 @@ QPushButton:pressed {
                      </item>
                     </layout>
                    </widget>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <widget class="QGroupBox" name="groupBox_2">
-                <property name="title">
-                 <string>Polarization Sweep</string>
-                </property>
-                <layout class="QGridLayout" name="gridLayout">
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="label_4">
-                   <property name="text">
-                    <string>StartPos:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="1" colspan="2">
-                  <widget class="QDoubleSpinBox" name="rotator_a_startpos_spbx">
-                   <property name="maximum">
-                    <double>360.000000000000000</double>
-                   </property>
-                   <property name="stepType">
-                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="3">
-                  <widget class="QLabel" name="label_9">
-                   <property name="text">
-                    <string>StopPos:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="4">
-                  <widget class="QDoubleSpinBox" name="rotator_a_stoppos_spbx">
-                   <property name="maximum">
-                    <double>360.000000000000000</double>
-                   </property>
-                   <property name="stepType">
-                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
-                   </property>
-                   <property name="value">
-                    <double>180.000000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="5">
-                  <widget class="QLabel" name="label_10">
-                   <property name="text">
-                    <string>Step:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="6">
-                  <widget class="QDoubleSpinBox" name="rotator_a_sweepstep_spbx">
-                   <property name="stepType">
-                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
-                   </property>
-                   <property name="value">
-                    <double>1.000000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="7">
-                  <widget class="QLabel" name="rotator_a_frames_spbx">
-                   <property name="text">
-                    <string>Frames:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="0" column="8">
-                  <widget class="QSpinBox" name="rotator_a_frame_spbx"/>
-                 </item>
-                 <item row="1" column="2" colspan="7">
-                  <widget class="QProgressBar" name="rotato_a_progressbar">
-                   <property name="styleSheet">
-                    <string notr="true">QProgressBar {
-    border: 2px solid grey;
-    background-color: #f0f0f0;
-    padding: 1px;
-    height: 16px;
-}
-
-QProgressBar::chunk {
-    background-color: #00bcd4;
-    width: 10px;
-}</string>
-                   </property>
-                   <property name="value">
-                    <number>0</number>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignCenter</set>
-                   </property>
-                   <property name="textDirection">
-                    <enum>QProgressBar::TopToBottom</enum>
-                   </property>
-                  </widget>
-                 </item>
-                 <item row="1" column="0" colspan="2">
-                  <widget class="QPushButton" name="rotator_a_sweep_start_btn">
-                   <property name="text">
-                    <string>Start</string>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="resources.qrc">
-                     <normaloff>:/my_icons/images/icons/play.svg</normaloff>:/my_icons/images/icons/play.svg</iconset>
-                   </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>20</width>
-                     <height>30</height>
-                    </size>
-                   </property>
                   </widget>
                  </item>
                 </layout>
