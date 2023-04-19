@@ -298,9 +298,9 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                             write_task.write(True)
                             time.sleep(0.01)
                             write_task.write(False)
-                            time.sleep(a_stime+0.5)             
+                            time.sleep(a_stime+2)             
                             self.rotator_a_info.emit('{}'.format(i))
-                            if i == 0 or i == tot_frame:
+                            if i == tot_frame:
                                 pass 
                             else:
                                 current_position = self.device_a.Position
