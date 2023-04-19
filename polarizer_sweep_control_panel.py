@@ -94,9 +94,11 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
 
         # Polarization sweep signal
         self.rotator_a_sweep_start_btn.clicked.connect(self.polarization_sweep)
-
+        self.rotator_a_interrupt_btn.clicked.connect(self.rotator_a_stop_sweep)
         # fram calculation signal
         self.rotator_a_calc_btn.clicked.connect(self.rotator_a_frame_calc)
+    def rotator_a_stop_sweep(self):
+        self.__stopConstant = True
     def connect_thread(self):
         self.boot_thread = Thread(
             target=self.rotator_connect
@@ -292,34 +294,38 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             do = write_task.do_channels.add_do_chan("Dev1/port0/line0")           
             
             i = 0
+            self.__stopConstant = False
             while i < (tot_frame+1):
-                self.rotator_a_progress_bar_info.emit(i/tot_frame*100)
-                if self.device_a.IsConnected:
-                    data = read_task.read()
-                    if  data == False:    
-                        write_task.write(True)
-                        time.sleep(0.01)
-                        write_task.write(False)
-                        time.sleep(a_stime+0.5)             
-                        self.rotator_a_info.emit('{}'.format(i))
-                        if i == 0 or i == tot_frame:
-                            pass 
-                        else:
-                            current_position = self.device_a.Position
-                            new_position = current_position + Decimal(a_step)
-                            workDone = self.device_a.InitializeWaitHandler()
-                            self.device_a.MoveTo(new_position, workDone)
-                            time.sleep(0.5)
-                            while True:
-                                if self.device_a.Status.IsInMotion:
-                                    time.sleep(0.01)
-                                else:
-                                    break                          
-                        i += 1
-                        
+                
+                if self.__stopConstant == False:
+                    self.rotator_a_progress_bar_info.emit(i/tot_frame*100)
+                    if self.device_a.IsConnected:
+                        data = read_task.read()
+                        if  data == False:    
+                            write_task.write(True)
+                            time.sleep(0.01)
+                            write_task.write(False)
+                            time.sleep(a_stime+0.5)             
+                            self.rotator_a_info.emit('{}'.format(i))
+                            if i == 0 or i == tot_frame:
+                                pass 
+                            else:
+                                current_position = self.device_a.Position
+                                new_position = current_position + Decimal(a_step)
+                                workDone = self.device_a.InitializeWaitHandler()
+                                self.device_a.MoveTo(new_position, workDone)
+                                time.sleep(0.5)
+                                while True:
+                                    if self.device_a.Status.IsInMotion:
+                                        time.sleep(0.01)
+                                    else:
+                                        break                          
+                            i += 1
+                            
+                    else:
+                        break            
                 else:
-                    break            
-                                    
+                    break                    
     '''Set Rotator A info ui'''
     def rotator_a_info_ui(self):
 
