@@ -1,7 +1,6 @@
 import sys
 import time
 import clr
-import serial
 import nidaqmx
 
 import polarizer_sweep_ui
@@ -27,6 +26,8 @@ from System import Decimal
 class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
     rotator_a_info = pyqtSignal(str)
     rotator_a_progress_bar_info = pyqtSignal(float)
+    rotator_b_info = pyqtSignal(str)
+    rotator_b_progress_bar_info = pyqtSignal(float)
     def __init__(self):
 
         super().__init__()
@@ -59,11 +60,19 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         # connect and set when boot
         self.connect_thread()
         # self.rotator_a_velocity_acceleration_step_set()
+        # init rotator B signal
+        # self.rotator_b_signal()
+        # # init rotator B info ui
+        # self.rotator_b_info_ui()
+
+        # # connect and set when boot
+        # self.b_connect_thread()
+        # # self.rotator_a_velocity_acceleration_step_set()
         
         
     '''Set Rotator A'''
     def rotator_a_signal(self):
-        self.connect_btn.clicked.connect(self.rotator_connect)
+        self.rotator_a_connect_btn.clicked.connect(self.rotator_connect)
 
         #message signal
         self.rotator_a_info.connect(self.rotator_a_slot)
@@ -95,18 +104,18 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         # Polarization sweep signal
         self.rotator_a_sweep_start_btn.clicked.connect(self.polarization_sweep)
         self.rotator_a_interrupt_btn.clicked.connect(self.rotator_a_stop_sweep)
-        # fram calculation signal
+        # frame calculation signal
         self.rotator_a_calc_btn.clicked.connect(self.rotator_a_frame_calc)
     def rotator_a_stop_sweep(self):
         self.__stopConstant = True
     def connect_thread(self):
-        self.boot_thread = Thread(
+        boot_thread = Thread(
             target=self.rotator_connect
         )
-        self.boot_thread.start()
+        boot_thread.start()
 
     def rotator_connect(self):
-        serial_number = self.serial_cbox.currentText().strip('S/N ')
+        serial_number = self.rotator_a_serial_cbox.currentText().strip('S/N ')
         # Init rotator A self.device_a
         DeviceManagerCLI.BuildDeviceList()
         self.device_a = CageRotator.CreateCageRotator(serial_number)
@@ -128,7 +137,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
 
         # Get Device Information and display description.
         device_info = self.device_a.GetDeviceInfo()
-        self.rotator_a_info.emit('{}: {}'.format(device_info.Description,self.serial_cbox.currentText()))
+        self.rotator_a_info.emit('{}: {}'.format(device_info.Description,self.rotator_a_serial_cbox.currentText()))
         self.rotator_a_info.emit('-'*60)
         # Load any configuration settings needed by the controller/stage.
         self.device_a.LoadMotorConfiguration(serial_number, DeviceConfiguration.DeviceSettingsUseOptionType.UseDeviceSettings)
@@ -149,8 +158,12 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             thread.start()
         
     def rotator_a_home_thread(self):
+       
+        
         if self.device_a.IsConnected:
-            self.device_a.Home(60000)
+            workDone = self.device_a.InitializeWaitHandler()
+
+            self.device_a.Home(workDone)
             
             if self.device_a.Status.IsHomed:
                 self.rotator_a_info.emit('Rotator A is homed.')
@@ -159,7 +172,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         else:
             self.rotator_a_info.emit('Device is not connected.')
             self.rotator_a_info.emit('-'*60)
-            
+        
     def rotator_a_disconnect(self):
         self.device_a.StopPolling()
         self.device_a.Disconnect(True)
@@ -334,7 +347,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.rot_a_msg.setText("<br>".join(self.rot_a_msg_history))
         self.rot_a_msg.resize(400, self.rot_a_msg.frameSize().height() + 20)
         self.rot_a_msg.repaint()  # 更新内容，如果不更新可能没有显示新内容
-        
+
+
             
     '''Set window ui'''
     def window_btn_signal(self):

@@ -11,6 +11,7 @@ clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\ThorLabs.MotionControl.I
 # Import functions from dlls. 
 from Thorlabs.MotionControl.DeviceManagerCLI import *
 from Thorlabs.MotionControl.GenericMotorCLI import *
+from Thorlabs.MotionControl.GenericMotorCLI.Settings import HomeSettings
 from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import *
 from System import Decimal 
 
@@ -39,10 +40,11 @@ def main():
 
         # Start polling loop and enable device.
         device.StartPolling(250)  #250ms polling rate.
-        time.sleep(25)
+        time.sleep(0.25)
         device.EnableDevice()
         time.sleep(0.25)  # Wait for device to enable.
-
+        # set = device.GetHomingVelocity()
+        # print(set)
         # Get Device Information and display description.
         device_info = device.GetDeviceInfo()
         print(device_info.Description)
@@ -53,13 +55,21 @@ def main():
 
         # Call device methods.
         print("Homing Device")
+        device.SetHomingVelocity(Decimal(15))
+        vel = device.GetHomingVelocity()
+        zero_offset = device.Settings.HomeSettings.HomeZeroOffset
+        print(vel)
+        print(zero_offset)
+        
+        can_home = device.CanHome
+        print(can_home)
         device.Home(60000)  # 60 second timeout.
         print("Done")
 
-        new_pos = Decimal(150.0)  # Must be a .NET decimal.
-        print(f'Moving to {new_pos}')
-        device.MoveTo(new_pos, 60000)  # 60 second timeout.
-        print("Done")
+        # new_pos = Decimal(150.0)  # Must be a .NET decimal.
+        # print(f'Moving to {new_pos}')
+        # device.MoveTo(new_pos, 60000)  # 60 second timeout.
+        # print("Done")
 
         # Stop polling loop and disconnect device before program finishes. 
         device.StopPolling()
