@@ -162,7 +162,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         
         if self.device_a.IsConnected:
             workDone = self.device_a.InitializeWaitHandler()
-
+            self.device_a.SetHomingVelocity(Decimal(10))
             self.device_a.Home(workDone)
             
             if self.device_a.Status.IsHomed:
@@ -190,15 +190,17 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             else:
                 break
     def rotator_a_move_to_position(self):
-        
-        velPars = self.device_a.GetVelocityParams()
-        velPars.MaxVelocity = Decimal(15)
-        self.device_a.SetVelocityParams(velPars)
+        if self.rot_a_ledit.text() != '':
+            velPars = self.device_a.GetVelocityParams()
+            velPars.MaxVelocity = Decimal(15)
+            self.device_a.SetVelocityParams(velPars)
 
-        new_position = Decimal(float(self.rot_a_ledit.text()))
-        workDone = self.device_a.InitializeWaitHandler()
-        self.device_a.MoveTo(new_position, workDone)
-        self.rot_a_ledit.clear()
+            new_position = Decimal(float(self.rot_a_ledit.text()))
+            workDone = self.device_a.InitializeWaitHandler()
+            self.device_a.MoveTo(new_position, workDone)
+            self.rot_a_ledit.clear()
+        else:
+            pass
     def rotator_a_stop(self):
         self.device_a.StopImmediate()
     def rotator_a_velocity_acceleration_step_set(self):
@@ -441,6 +443,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             thread.start()
     def rotator_b_home_thread(self):
         if self.device_b.IsConnected:
+            self.device_b.SetHomingVelocity(Decimal(10))
             self.device_b.Home(60000)
             
             if self.device_b.Status.IsHomed:
@@ -473,15 +476,17 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.rot_b_msg.resize(400, self.rot_b_msg.frameSize().height() + 20)
         self.rot_b_msg.repaint()  # 更新内容，如果不更新可能没有显示新内容   
     def rotator_b_move_to_position(self):
-        
-        velPars = self.device_b.GetVelocityParams()
-        velPars.MaxVelocity = Decimal(15)
-        self.device_b.SetVelocityParams(velPars)
+        if self.rot_b_ledit.text() != '':
+            velPars = self.device_b.GetVelocityParams()
+            velPars.MaxVelocity = Decimal(15)
+            self.device_b.SetVelocityParams(velPars)
 
-        new_position = Decimal(float(self.rot_b_ledit.text()))
-        workDone = self.device_b.InitializeWaitHandler()
-        self.device_b.MoveTo(new_position, workDone)
-        self.rot_b_ledit.clear()
+            new_position = Decimal(float(self.rot_b_ledit.text()))
+            workDone = self.device_b.InitializeWaitHandler()
+            self.device_b.MoveTo(new_position, workDone)
+            self.rot_b_ledit.clear()
+        else:
+            pass
     def rotator_b_stop(self):
         self.device_b.StopImmediate()
     def rotator_b_step_forward(self):
