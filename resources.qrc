@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="my_icons">
+    <file>images/icons/nanopositioner_down_arrow.svg</file>
+    <file>images/icons/nanopositioner_left_arrow.svg</file>
+    <file>images/icons/nanopositioner_rigt_arrow.svg</file>
+    <file>images/icons/nanopositioner_up_arrow.svg</file>
     <file>images/icons/interrupt.svg</file>
     <file>images/icons/disconnect.svg</file>
     <file>images/icons/down_arrow.svg</file>
