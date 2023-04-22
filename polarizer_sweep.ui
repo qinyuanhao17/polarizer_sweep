@@ -351,7 +351,7 @@ QPushButton:pressed {
               <x>20</x>
               <y>30</y>
               <width>586</width>
-              <height>637</height>
+              <height>621</height>
              </rect>
             </property>
             <property name="styleSheet">
@@ -837,7 +837,11 @@ QPushButton:pressed {
                    <item row="1" column="6">
                     <widget class="QPushButton" name="rotator_a_calc_btn">
                      <property name="text">
-                      <string>Calculate</string>
+                      <string>Calc</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="resources.qrc">
+                       <normaloff>:/my_icons/images/icons/restore.svg</normaloff>:/my_icons/images/icons/restore.svg</iconset>
                      </property>
                     </widget>
                    </item>
@@ -1411,7 +1415,11 @@ QProgressBar::chunk {
                    <item row="1" column="6">
                     <widget class="QPushButton" name="rotator_b_calc_btn">
                      <property name="text">
-                      <string>Calculate</string>
+                      <string>Calc</string>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="resources.qrc">
+                       <normaloff>:/my_icons/images/icons/restore.svg</normaloff>:/my_icons/images/icons/restore.svg</iconset>
                      </property>
                     </widget>
                    </item>
