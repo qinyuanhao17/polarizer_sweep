@@ -704,8 +704,8 @@ class Ui_Form(object):
         self.rotator_b_interrupt_btn.setIconSize(QtCore.QSize(20, 30))
         self.rotator_b_interrupt_btn.setObjectName("rotator_b_interrupt_btn")
         self.horizontalLayout_11.addWidget(self.rotator_b_interrupt_btn)
-        self.rotato_b_progressbar = QtWidgets.QProgressBar(self.groupBox_4)
-        self.rotato_b_progressbar.setStyleSheet("QProgressBar {\n"
+        self.rotator_b_progressbar = QtWidgets.QProgressBar(self.groupBox_4)
+        self.rotator_b_progressbar.setStyleSheet("QProgressBar {\n"
 "    border: 2px solid grey;\n"
 "    background-color: #f0f0f0;\n"
 "    padding: 1px;\n"
@@ -716,11 +716,11 @@ class Ui_Form(object):
 "    background-color: #00bcd4;\n"
 "    width: 10px;\n"
 "}")
-        self.rotato_b_progressbar.setProperty("value", 0)
-        self.rotato_b_progressbar.setAlignment(QtCore.Qt.AlignCenter)
-        self.rotato_b_progressbar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
-        self.rotato_b_progressbar.setObjectName("rotato_b_progressbar")
-        self.horizontalLayout_11.addWidget(self.rotato_b_progressbar)
+        self.rotator_b_progressbar.setProperty("value", 0)
+        self.rotator_b_progressbar.setAlignment(QtCore.Qt.AlignCenter)
+        self.rotator_b_progressbar.setTextDirection(QtWidgets.QProgressBar.TopToBottom)
+        self.rotator_b_progressbar.setObjectName("rotator_b_progressbar")
+        self.horizontalLayout_11.addWidget(self.rotator_b_progressbar)
         self.verticalLayout_10.addLayout(self.horizontalLayout_11)
         self.verticalLayout_6.addWidget(self.groupBox_4)
         self.groupBox_8 = QtWidgets.QGroupBox(self.rot_b)

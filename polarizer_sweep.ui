@@ -1453,7 +1453,7 @@ QProgressBar::chunk {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QProgressBar" name="rotato_b_progressbar">
+                    <widget class="QProgressBar" name="rotator_b_progressbar">
                      <property name="styleSheet">
                       <string notr="true">QProgressBar {
     border: 2px solid grey;
