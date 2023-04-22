@@ -57,7 +57,7 @@ def main():
         print("Homing Device")
         device.SetHomingVelocity(Decimal(15))
         vel = device.GetHomingVelocity()
-        zero_offset = device.Settings.HomeSettings.HomeZeroOffset
+        zero_offset = device.GetSettings
         print(vel)
         print(zero_offset)
         
