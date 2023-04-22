@@ -38,7 +38,7 @@ QGroupBox{
 	font: 25 9pt &quot;Microsoft YaHei UI Light&quot;;
 }
 QPushButton{
-	background-color: rgb(255, 255, 255);
+	background-color: rgba(255, 255, 255,255);
 	border-radius: 2px;
 	border: 1px groove gray;
 	font: 63 9pt &quot;Nunito Sans SemiBold&quot;;
@@ -52,6 +52,12 @@ QLabel{
 QComboBox{
 	
 	font: 9pt &quot;Menlo for Powerline&quot;;
+}
+QPushButton:hover {
+	background-color: rgba(160, 160, 160,100);
+}
+QPushButton:pressed {	
+	background-color: transparent;
 }
 </string>
   </property>
@@ -225,7 +231,7 @@ QComboBox{
 	background-color: rgba(239, 244, 249, 0);
 }
 QPushButton:hover {
-	background-color: rgb(160, 160, 160,100);
+	background-color: rgba(160, 160, 160,100);
 }
 QPushButton:pressed {	
 	background-color: transparent;
@@ -262,7 +268,7 @@ QPushButton:pressed {
 	background-color: rgba(239, 244, 249, 0);
 }
 QPushButton:hover {
-	background-color: rgb(160, 160, 160,100);
+	background-color: rgba(160, 160, 160,100);
 }
 QPushButton:pressed {	
 	background-color: transparent;
@@ -304,7 +310,7 @@ QPushButton:pressed {
 	background-color: rgba(239, 244, 249, 0);
 }
 QPushButton:hover {
-	background-color: rgb(196, 43, 28,200);
+	background-color: rgba(196, 43, 28,200);
 }
 QPushButton:pressed {	
 	background-color: transparent;
@@ -331,12 +337,7 @@ QPushButton:pressed {
             </sizepolicy>
            </property>
            <property name="styleSheet">
-            <string notr="true">QPushButton:hover {
-	background-color: rgb(160, 160, 160,100);
-}
-QPushButton:pressed {	
-	background-color: transparent;
-}</string>
+            <string notr="true"/>
            </property>
            <property name="frameShape">
             <enum>QFrame::StyledPanel</enum>
@@ -358,7 +359,7 @@ QPushButton:pressed {
 	border-top-right-radius: 10px;
 	border-bottom-right-radius: 10px;
 	border-bottom-left-radius:10px;
-	background-color: rgb(190, 190, 190,50);
+	background-color: rgba(190, 190, 190,50);
 }
 
 </string>

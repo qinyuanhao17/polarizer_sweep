@@ -2,7 +2,7 @@ import sys
 import time
 import clr
 import nidaqmx
-
+import pythoncom
 import polarizer_sweep_ui
 from threading import Thread
 from PyQt5.QtGui import QIcon, QPixmap, QCursor, QMouseEvent, QColor, QFont
@@ -115,6 +115,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         boot_thread.start()
 
     def rotator_connect(self):
+        pythoncom.CoInitialize()
         serial_number = self.rotator_a_serial_cbox.currentText().strip('S/N ')
         # Init rotator A self.device_a
         DeviceManagerCLI.BuildDeviceList()
@@ -142,6 +143,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         # Load any configuration settings needed by the controller/stage.
         self.device_a.LoadMotorConfiguration(serial_number, DeviceConfiguration.DeviceSettingsUseOptionType.UseDeviceSettings)
         self.device_a.LoadMotorConfiguration(serial_number)
+        pythoncom.CoUninitialize()
         thread = Thread(
             target=self.rotator_a_position_view
         )
@@ -159,7 +161,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         
     def rotator_a_home_thread(self):
        
-        
+        pythoncom.CoInitialize()
         if self.device_a.IsConnected:
             workDone = self.device_a.InitializeWaitHandler()
             self.device_a.SetHomingVelocity(Decimal(10))
@@ -172,7 +174,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         else:
             self.rotator_a_info.emit('Device is not connected.')
             self.rotator_a_info.emit('-'*60)
-        
+        pythoncom.CoUninitialize()
     def rotator_a_disconnect(self):
         self.device_a.StopPolling()
         self.device_a.Disconnect(True)
@@ -289,6 +291,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             self.rotator_a_frame_spbx.setValue(tot_frame)    
             
     def rotator_a_read_write_thread(self):
+        pythoncom.CoInitialize()
         
         a_start_position = float(self.rotator_a_startpos_spbx.text())
         a_stop_position = float(self.rotator_a_stoppos_spbx.text())
@@ -333,7 +336,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                     else:
                         break            
                 else:
-                    break                    
+                    break 
+        pythoncom.CoUninitialize()                   
     '''Set Rotator A info ui'''
     def rotator_a_info_ui(self):
 
@@ -390,6 +394,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         boot_thread.start()
     
     def rotator_b_connect(self):
+        pythoncom.CoInitialize()
         serial_number = self.rotator_b_serial_cbox.currentText().strip('S/N ')
         # Init rotator A self.device_a
         DeviceManagerCLI.BuildDeviceList()
@@ -417,13 +422,15 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         # Load any configuration settings needed by the controller/stage.
         self.device_b.LoadMotorConfiguration(serial_number, DeviceConfiguration.DeviceSettingsUseOptionType.UseDeviceSettings)
         self.device_b.LoadMotorConfiguration(serial_number)
+
+        pythoncom.CoUninitialize()
         thread = Thread(
             target=self.rotator_b_position_view
         )
         thread.start()
     
     def rotator_b_position_view(self):
-        
+        pythoncom.CoInitialize()
         self.b_position_view.setSmallDecimalPoint(True)
         while True:
             if self.device_b.IsConnected:
@@ -432,6 +439,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                 time.sleep(0.2)
             else:
                 break
+        pythoncom.CoUninitialize()
     def rotator_b_home(self):
         if self.device_b.Status.IsHoming:
             pass
@@ -442,6 +450,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             )
             thread.start()
     def rotator_b_home_thread(self):
+        
+        pythoncom.CoInitialize()
         if self.device_b.IsConnected:
             self.device_b.SetHomingVelocity(Decimal(10))
             self.device_b.Home(60000)
@@ -453,6 +463,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         else:
             self.rotator_b_info.emit('Device is not connected.')
             self.rotator_b_info.emit('-'*60)
+        pythoncom.CoUninitialize()
+
     def rotator_b_disconnect(self):
         self.device_b.StopPolling()
         self.device_b.Disconnect(True)
@@ -574,7 +586,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             self.rotator_b_frame_spbx.setValue(tot_frame)    
             
     def rotator_b_read_write_thread(self):
-        
+        pythoncom.CoInitialize()
         b_start_position = float(self.rotator_b_startpos_spbx.text())
         b_stop_position = float(self.rotator_b_stoppos_spbx.text())
         b_step = float(self.rotator_b_sweepstep_spbx.text())
@@ -619,6 +631,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                         break            
                 else:
                     break 
+        pythoncom.CoUninitialize()
     def rotator_b_stop_sweep(self):
         self.__stopConstantB = True 
     '''Set window ui'''
