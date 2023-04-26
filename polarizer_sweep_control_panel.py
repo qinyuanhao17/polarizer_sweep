@@ -3,7 +3,10 @@ import time
 import clr
 import nidaqmx
 import pythoncom
+import re
+import serial
 import polarizer_sweep_ui
+import serial.tools.list_ports as lp
 from threading import Thread
 from PyQt5.QtGui import QIcon, QPixmap, QCursor, QMouseEvent, QColor, QFont
 from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QEvent
@@ -34,8 +37,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         
         # init UI
         self.setupUi(self)
-        self.ui_width = int(QDesktopWidget().availableGeometry().size().width()*0.65)
-        self.ui_height = int(QDesktopWidget().availableGeometry().size().height()*0.65)
+        self.ui_width = int(QDesktopWidget().availableGeometry().size().width()*0.45)
+        self.ui_height = int(QDesktopWidget().availableGeometry().size().height()*0.5)
         self.resize(self.ui_width, self.ui_height)
         center_pointer = QDesktopWidget().availableGeometry().center()
         x = center_pointer.x()
@@ -69,7 +72,133 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.b_connect_thread()
         # # self.rotator_a_velocity_acceleration_step_set()
         
+        '''ANC300 Init'''
+        # Turn on ANC 300
+        self.anc_comport_read()
+        # anc signal init
+        self.anc_signal()
+    '''ANC300 Control'''
+    def anc_signal(self):
+        # axis 1 signal
+        self.ax1_on_btn.clicked.connect(self.ax1_on)
+        self.ax1_off_btn.clicked.connect(self.ax1_off)
+        self.anc300_connect_btn.clicked.connect(self.anc_connect)
+        self.ax1_cap_meas_btn.clicked.connect(self.ax1_capacity_measure)
+        self.ax1_set_btn.clicked.connect(self.ax1_freq_vol_set)
+
+        self.x_plus_btn.clicked.connect(self.ax1_stp_plus)
+        self.x_minus_btn.clicked.connect(self.ax1_stp_minus)
+        self.x_plus_btn.pressed.connect(self.ax1_continue_plus)
+        self.x_minus_btn.pressed.connect(self.ax1_continue_minus)
+        self.x_plus_btn.released.connect(self.ax1_stop)
+        self.x_minus_btn.released.connect(self.ax1_stop)
+
+        # axis 2 signal
+        self.ax2_on_btn.clicked.connect(self.ax2_on)
+        self.ax2_off_btn.clicked.connect(self.ax2_off)
+        self.ax2_cap_meas_btn.clicked.connect(self.ax2_capacity_measure)
+        self.ax2_set_btn.clicked.connect(self.ax2_freq_vol_set)
+
+        self.y_plus_btn.clicked.connect(self.ax2_stp_plus)
+        self.y_minus_btn.clicked.connect(self.ax2_stp_minus)
+        self.y_plus_btn.pressed.connect(self.ax2_continue_plus)
+        self.y_minus_btn.pressed.connect(self.ax2_continue_minus)
+        self.y_plus_btn.released.connect(self.ax2_stop)
+        self.y_minus_btn.released.connect(self.ax2_stop)
+    def anc_comport_read(self):
+        rs = list(lp.comports())
+        for item in rs:
+            item = str(item)
+            index = item.index('-')
+            item = item[0:index-1]
+            self.anc_cbx.addItem(item)
+    def anc_connect(self):
+        comport = self.anc_cbx.currentText()
         
+        self.anc300 = serial.Serial(comport,115200,timeout=1)
+    def ax1_on(self):
+        self.anc300.write(b'setm 1 stp \r\n')
+    def ax1_off(self):
+        self.anc300.write(b'setm 1 gnd \r\n')
+    def ax1_capacity_measure(self):
+        self.anc300.write(b'getc 1 \r\n')
+        while True:
+            response = self.anc300.readlines()
+            if response:
+                for line in response:
+                    line = str(line.rstrip(),'utf-8')              
+                    if line[0:11] == 'capacitance':
+                        
+                        line = str(line)
+                        index = line.index('=')
+                        self.ax1_cap_ledit.setText(line[index+2:index+7])
+                    
+            else:
+                break
+        self.anc300.write(b'capw 1 \r\n')
+    def ax1_freq_vol_set(self):
+        freq = int(self.ax1_freq_spbx.text())
+        vol = int(self.ax1_vol_spbx.text())
+        freq_signal = 'setf 1 {} \r\n'.format(freq)
+        vol_signal = 'setv 1 {} \r\n'.format(vol)
+        rtn = self.anc300.write(freq_signal.encode())
+        rtn = self.anc300.write(vol_signal.encode())
+    def ax1_stp_plus(self):
+        rtn = self.anc300.write(b'stepu 1 1 \r\n')
+        rtn = self.anc300.write(b'stepw 1 \r\n')
+    def ax1_stp_minus(self):
+        rtn = self.anc300.write(b'stepd 1 1 \r\n')
+        rtn = self.anc300.write(b'stepw 1 \r\n')
+    def ax1_continue_plus(self):
+        rtn = self.anc300.write(b'stepu 1 C \r\n')
+        # rtn = self.anc300.write(b'stepw 1 \r\n')
+    def ax1_continue_minus(self):
+        rtn = self.anc300.write(b'stepd 1 C \r\n')
+        # rtn = self.anc300.write(b'stepw 1 \r\n')
+    def ax1_stop(self):
+        rtn = self.anc300.write(b'stop 1 \r\n')
+
+    def ax2_on(self):
+        self.anc300.write(b'setm 2 stp \r\n')
+    def ax2_off(self):
+        self.anc300.write(b'setm 2 gnd \r\n')
+    def ax2_capacity_measure(self):
+        self.anc300.write(b'getc 2 \r\n')
+        while True:
+            response = self.anc300.readlines()
+            if response:
+                for line in response:
+                    line = str(line.rstrip(),'utf-8')              
+                    if line[0:22] == 'capacitance':
+                        
+                        line = str(line)
+                        index = line.index('=')
+                        self.ax2_cap_ledit.setText(line[index+2:index+7])
+                    
+            else:
+                break
+        self.anc300.write(b'capw 2 \r\n')
+    def ax2_freq_vol_set(self):
+        freq = int(self.ax2_freq_spbx.text())
+        vol = int(self.ax2_vol_spbx.text())
+        freq_signal = 'setf 2 {} \r\n'.format(freq)
+        vol_signal = 'setv 2 {} \r\n'.format(vol)
+        rtn = self.anc300.write(freq_signal.encode())
+        rtn = self.anc300.write(vol_signal.encode())
+    def ax2_stp_plus(self):
+        rtn = self.anc300.write(b'stepd 2 1 \r\n')
+        rtn = self.anc300.write(b'stepw 2 \r\n')
+    def ax2_stp_minus(self):
+        rtn = self.anc300.write(b'stepu 2 1 \r\n')
+        rtn = self.anc300.write(b'stepw 2 \r\n')
+    def ax2_continue_plus(self):
+        rtn = self.anc300.write(b'stepd 2 C \r\n')
+        # rtn = self.anc300.write(b'stepw 2 \r\n')
+    def ax2_continue_minus(self):
+        rtn = self.anc300.write(b'stepu 2 C \r\n')
+        # rtn = self.anc300.write(b'stepw 2 \r\n')
+    def ax2_stop(self):
+        rtn = self.anc300.write(b'stop 2 \r\n')
     '''Set Rotator A'''
     def rotator_a_signal(self):
         self.rotator_a_connect_btn.clicked.connect(self.connect_thread)
@@ -192,7 +321,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             else:
                 break
     def rotator_a_move_to_position(self):
-        if self.rot_a_ledit.text() != '':
+        if self.is_number(self.rot_a_ledit.text()):
             velPars = self.device_a.GetVelocityParams()
             velPars.MaxVelocity = Decimal(15)
             self.device_a.SetVelocityParams(velPars)
@@ -202,6 +331,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             self.device_a.MoveTo(new_position, workDone)
             self.rot_a_ledit.clear()
         else:
+            self.rot_a_ledit.clear()
             pass
     def rotator_a_stop(self):
         self.device_a.StopImmediate()
@@ -337,6 +467,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                         break            
                 else:
                     break 
+        
         pythoncom.CoUninitialize()                   
     '''Set Rotator A info ui'''
     def rotator_a_info_ui(self):
@@ -488,7 +619,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.rot_b_msg.resize(400, self.rot_b_msg.frameSize().height() + 20)
         self.rot_b_msg.repaint()  # 更新内容，如果不更新可能没有显示新内容   
     def rotator_b_move_to_position(self):
-        if self.rot_b_ledit.text() != '':
+        if self.is_number(self.rot_b_ledit.text()):
             velPars = self.device_b.GetVelocityParams()
             velPars.MaxVelocity = Decimal(15)
             self.device_b.SetVelocityParams(velPars)
@@ -498,6 +629,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             self.device_b.MoveTo(new_position, workDone)
             self.rot_b_ledit.clear()
         else:
+            self.rot_b_ledit.clear()
             pass
     def rotator_b_stop(self):
         self.device_b.StopImmediate()
@@ -632,8 +764,15 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                 else:
                     break 
         pythoncom.CoUninitialize()
+
     def rotator_b_stop_sweep(self):
         self.__stopConstantB = True 
+    
+    def is_number(self,string):
+        pattern = r'^[-+]?(\d+(\.\d*)?|\.\d+)([eE][-+]?\d+)?$'
+        return bool(re.match(pattern, string))
+    
+
     '''Set window ui'''
     def window_btn_signal(self):
         # window button sigmal
@@ -696,6 +835,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.device_b.StopImmediate()
         self.device_b.StopPolling()
         self.device_b.Disconnect(True)
+        self.anc300.close()
 
 if __name__ == '__main__':
 
