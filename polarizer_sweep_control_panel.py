@@ -1023,6 +1023,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.device_b.StopPolling()
         self.device_b.Disconnect(True)
         self.anc300.close()
+        self.device_pump.StopPolling()
+        self.device_pump.Disconnect(True)
 
 if __name__ == '__main__':
 
