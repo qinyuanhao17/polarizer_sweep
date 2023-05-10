@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import QWidget, QApplication, QGraphicsDropShadowEffect,QDe
 clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\Thorlabs.MotionControl.DeviceManagerCLI.dll")
 clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\Thorlabs.MotionControl.GenericMotorCLI.dll")
 clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\ThorLabs.MotionControl.IntegratedStepperMotorsCLI.dll")
+clr.AddReference("C:\\Program Files\\Thorlabs\\Kinesis\\ThorLabs.MotionControl.KCube.InertialMotorCLI.dll")
 
 # Import functions from dlls. 
 from Thorlabs.MotionControl import DeviceManagerCLI
@@ -24,6 +25,8 @@ from Thorlabs.MotionControl.GenericMotorCLI import *
 from Thorlabs.MotionControl.GenericMotorCLI import MotorDirection
 from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import *
 from Thorlabs.MotionControl.IntegratedStepperMotorsCLI import CageRotator
+from Thorlabs.MotionControl.KCube.InertialMotorCLI import *
+from Thorlabs.MotionControl.KCube.InertialMotorCLI import KCubeInertialMotor
 from System import Decimal 
 
 class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
@@ -37,8 +40,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         
         # init UI
         self.setupUi(self)
-        self.ui_width = int(QDesktopWidget().availableGeometry().size().width()*0.45)
-        self.ui_height = int(QDesktopWidget().availableGeometry().size().height()*0.5)
+        self.ui_width = int(QDesktopWidget().availableGeometry().size().width()*0.48)
+        self.ui_height = int(QDesktopWidget().availableGeometry().size().height()*0.65)
         self.resize(self.ui_width, self.ui_height)
         center_pointer = QDesktopWidget().availableGeometry().center()
         x = center_pointer.x()
@@ -61,7 +64,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.rotator_a_info_ui()
 
         # connect and set when boot
-        self.connect_thread()
+        # self.connect_thread()
         # self.rotator_a_velocity_acceleration_step_set()
         # init rotator B signal
         self.rotator_b_signal()
@@ -69,7 +72,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.rotator_b_info_ui()
 
         # # connect and set when boot
-        self.b_connect_thread()
+        # self.b_connect_thread()
         # # self.rotator_a_velocity_acceleration_step_set()
         
         '''ANC300 Init'''
@@ -77,6 +80,184 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.anc_comport_read()
         # anc signal init
         self.anc_signal()
+
+        '''Pump K-Cube Signal'''
+        self.pump_signal()
+    '''Pump K-Cube Control'''
+    def pump_signal(self):
+        self.pump_connect_btn.clicked.connect(self.pump_connect_thread)
+        self.pump_ch1_set_btn.clicked.connect(self.pump_ch1_set)
+        self.pump_ch2_set_btn.clicked.connect(self.pump_ch2_set)
+        self.pump_ch1_move_tbtn.clicked.connect(self.pump_ch1_move_thread)
+        self.pump_ch2_move_tbtn.clicked.connect(self.pump_ch2_move_thread)
+        self.pump_ch1_ledit.returnPressed.connect(self.pump_ch1_move_thread)
+        self.pump_ch2_ledit.returnPressed.connect(self.pump_ch2_move_thread)
+        self.pump_ch1_forward_btn.clicked.connect(self.pump_ch1_step_forward_tread)
+        self.pump_ch2_forward_btn.clicked.connect(self.pump_ch2_step_forward_tread)
+        self.pump_ch1_backward_btn.clicked.connect(self.pump_ch1_step_backward_tread)
+        self.pump_ch2_backward_btn.clicked.connect(self.pump_ch2_step_backward_tread)
+        self.pump_ch1_stop_tbtn.clicked.connect(self.pump_ch1_stop)
+        self.pump_ch2_stop_tbtn.clicked.connect(self.pump_ch2_stop)
+        self.pump_disconnect_btn.clicked.connect(self.pump_disconnect)
+    def pump_disconnect(self):
+        self.device_pump.StopPolling()
+        self.device_pump.Disconnect()
+    def pump_ch1_stop(self):
+        self.device_pump.Stop(self.chan1)
+    def pump_ch2_stop(self):
+        self.device_pump.Stop(self.chan2)
+    def pump_ch1_step_forward_tread(self):
+        thread = Thread(
+            target=self.pump_ch1_step_forward
+        )
+        thread.start()
+    def pump_ch2_step_forward_tread(self):
+        thread = Thread(
+            target=self.pump_ch2_step_forward
+        )
+        thread.start()
+    def pump_ch1_step_forward(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            step = int(self.pump_ch1_step_move_spbx.text())
+            current_position = self.device_pump.GetPosition(self.chan1)
+            new_pos = step + current_position
+            self.device_pump.MoveTo(self.chan1, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def pump_ch2_step_forward(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            step = int(self.pump_ch2_step_move_spbx.text())
+            current_position = self.device_pump.GetPosition(self.chan2)
+            new_pos = step + current_position
+            self.device_pump.MoveTo(self.chan2, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def pump_ch1_step_backward_tread(self):
+        thread = Thread(
+            target=self.pump_ch1_step_backward
+        )
+        thread.start()
+    def pump_ch2_step_backward_tread(self):
+        thread = Thread(
+            target=self.pump_ch2_step_backward
+        )
+        thread.start()
+    def pump_ch1_step_backward(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            step = int(self.pump_ch1_step_move_spbx.text())
+            current_position = self.device_pump.GetPosition(self.chan1)
+            new_pos = current_position - step
+            self.device_pump.MoveTo(self.chan1, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def pump_ch2_step_backward(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            step = int(self.pump_ch2_step_move_spbx.text())
+            current_position = self.device_pump.GetPosition(self.chan2)
+            new_pos = current_position - step
+            self.device_pump.MoveTo(self.chan2, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def pump_ch1_move_thread(self):
+        thread = Thread(
+            target=self.pump_ch1_move
+        )
+        thread.start()
+    def pump_ch2_move_thread(self):
+        thread = Thread(
+            target=self.pump_ch2_move
+        )
+        thread.start()
+    def pump_ch1_move(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            if self.is_number(self.pump_ch1_ledit.text()):
+                if int(self.pump_ch1_ledit.text()) != self.device_pump.GetPosition(self.chan1):
+                    new_pos = int(self.pump_ch1_ledit.text())
+                    self.device_pump.MoveTo(self.chan1, new_pos, 60000) 
+                    self.pump_ch1_ledit.clear()
+        pythoncom.CoUninitialize()
+    def pump_ch2_move(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            if self.is_number(self.pump_ch2_ledit.text()):
+                if int(self.pump_ch2_ledit.text()) != self.device_pump.GetPosition(self.chan2):
+                    new_pos = int(self.pump_ch2_ledit.text())
+                    self.device_pump.MoveTo(self.chan2, new_pos, 60000) 
+                    self.pump_ch2_ledit.clear()
+        pythoncom.CoUninitialize()            
+    def pump_ch1_set(self):
+        step_rate = int(self.pump_ch1_step_spbx.text())
+        step_acc = int(self.pump_ch1_step_spbx.text())
+        self.device_settings.Drive.Channel(self.chan1).StepRate = step_rate
+        self.device_settings.Drive.Channel(self.chan1).StepAcceleration = step_acc
+        # Send settings to the device
+        self.device_pump.SetSettings(self.device_settings, True, True)
+    def pump_ch2_set(self):
+        step_rate = int(self.pump_ch2_step_spbx.text())
+        step_acc = int(self.pump_ch2_step_spbx.text())
+        self.device_settings.Drive.Channel(self.chan2).StepRate = step_rate
+        self.device_settings.Drive.Channel(self.chan2).StepAcceleration = step_acc
+        # Send settings to the device
+        self.device_pump.SetSettings(self.device_settings, True, True)
+    def pump_connect_thread(self):
+        pump_connect_thread = Thread(
+            target=self.pump_connect
+        )
+        pump_connect_thread.start()
+    def pump_connect(self):
+        pythoncom.CoInitialize()
+        
+        serial_number = self.pump_serial_cbox.currentText().strip('S/N ')
+        # Init rotator A self.device_a
+        DeviceManagerCLI.BuildDeviceList()
+        self.device_pump = KCubeInertialMotor.CreateKCubeInertialMotor(serial_number)
+        self.device_pump.Connect(serial_number)
+
+        # Start polling loop and enable self.device_a.
+        polling_rate = 250
+        self.device_pump.StartPolling(polling_rate)  #250ms polling rate.
+
+        self.device_pump.EnableDevice()
+        time.sleep(0.25)  # Wait for self.device_a to enable.
+        device_info = self.device_pump.GetDeviceInfo()
+        print(device_info.Description)
+        # Load any configuration settings needed by the controller/stage.
+        inertial_motor_config = self.device_pump.GetInertialMotorConfiguration(serial_number)
+        self.device_settings = ThorlabsInertialMotorSettings.GetSettings(inertial_motor_config)
+        # Step parameters for an intertial motor channel
+        self.chan1 = InertialMotorStatus.MotorChannels.Channel1  # enum chan ident
+        self.chan2 = InertialMotorStatus.MotorChannels.Channel2  # enum chan ident
+
+        pythoncom.CoUninitialize()
+        pump_position_view_thread = Thread(
+            target=self.pump_position_view_func
+        )
+        pump_position_view_thread.start()
+
+    def pump_position_view_func(self):
+        pythoncom.CoInitialize()
+        while True:
+            if self.device_pump.IsConnected:
+                
+                self.pump_ch1_position_view.display(int(self.device_pump.GetPosition(self.chan1)))
+                self.pump_ch2_position_view.display(int(self.device_pump.GetPosition(self.chan2)))
+                time.sleep(0.2)
+            else:
+                break
+        pythoncom.CoUninitialize()
     '''ANC300 Control'''
     def anc_signal(self):
         # axis 1 signal

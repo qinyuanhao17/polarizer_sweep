@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="my_icons">
+    <file>images/icons/clockwise.svg</file>
+    <file>images/icons/counterclockwise.svg</file>
     <file>images/icons/nanopositioner_down_arrow.svg</file>
     <file>images/icons/nanopositioner_left_arrow.svg</file>
     <file>images/icons/nanopositioner_rigt_arrow.svg</file>
