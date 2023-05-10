@@ -99,6 +99,12 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.pump_ch1_stop_tbtn.clicked.connect(self.pump_ch1_stop)
         self.pump_ch2_stop_tbtn.clicked.connect(self.pump_ch2_stop)
         self.pump_disconnect_btn.clicked.connect(self.pump_disconnect)
+        self.pump_ch1_setzero_btn.clicked.connect(self.pump_ch1_setzero)
+        self.pump_ch2_setzero_btn.clicked.connect(self.pump_ch2_setzero)
+    def pump_ch1_setzero(self):
+        self.device_pump.SetPositionAs(self.chan1, 0)
+    def pump_ch2_setzero(self):
+        self.device_pump.SetPositionAs(self.chan2, 0)
     def pump_disconnect(self):
         self.device_pump.StopPolling()
         self.device_pump.Disconnect()
