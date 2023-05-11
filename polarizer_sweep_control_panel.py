@@ -40,8 +40,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         
         # init UI
         self.setupUi(self)
-        self.ui_width = int(QDesktopWidget().availableGeometry().size().width()*0.48)
-        self.ui_height = int(QDesktopWidget().availableGeometry().size().height()*0.65)
+        self.ui_width = int(QDesktopWidget().availableGeometry().size().width()*0.76)
+        self.ui_height = int(QDesktopWidget().availableGeometry().size().height()*0.55)
         self.resize(self.ui_width, self.ui_height)
         center_pointer = QDesktopWidget().availableGeometry().center()
         x = center_pointer.x()
@@ -83,6 +83,105 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
 
         '''Pump K-Cube Signal'''
         self.pump_signal()
+        '''z K-Cube Signal'''
+        self.z_signal()
+    def z_signal(self):
+        self.z_ch3_set_btn.clicked.connect(self.z_set)
+        self.z_ledit.returnPressed.connect(self.z_move_to_thread)
+        self.z_move_tbtn.clicked.connect(self.z_move_to_thread)
+        self.z_upward_btn.clicked.connect(self.z_upward_thread)
+        self.z_downward_btn.clicked.connect(self.z_downward_thread)
+        self.z_stop_tbtn.clicked.connect(self.z_stop)
+        self.z_ch3_setzero_btn.clicked.connect(self.z_ch3_setzero)
+        self.z_upward_btn.pressed.connect(self.z_upward_continuous_thread)
+        self.z_downward_btn.pressed.connect(self.z_downward_continuous_thread)
+        self.z_upward_btn.released.connect(self.z_stop)
+        self.z_downward_btn.released.connect(self.z_stop)
+    def z_upward_continuous_thread(self):
+        thread = Thread(
+            target=self.z_upward_continuous
+        )
+        thread.start()
+    def z_downward_continuous_thread(self):
+        thread = Thread(
+            target=self.z_downward_continuous
+        )
+        thread.start()
+    def z_upward_continuous(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            current_position = self.device_pump.GetPosition(self.chan3)
+            new_pos = current_position + 500000
+            self.device_pump.MoveTo(self.chan3, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def z_downward_continuous(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            current_position = self.device_pump.GetPosition(self.chan3)
+            new_pos = current_position - 500000
+            self.device_pump.MoveTo(self.chan3, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def z_ch3_setzero(self):
+        self.device_pump.SetPositionAs(self.chan3, 0)
+    def z_stop(self):
+        self.device_pump.Stop(self.chan3)
+    def z_upward_thread(self):
+        thread = Thread(
+            target=self.z_upward
+        )
+        thread.start()
+    def z_upward(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            step = int(self.z_ch3_step_move_spbx.text())
+            current_position = self.device_pump.GetPosition(self.chan3)
+            new_pos = step + current_position
+            self.device_pump.MoveTo(self.chan3, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def z_downward_thread(self):
+        thread = Thread(
+            target=self.z_downward
+        )
+        thread.start()
+    def z_downward(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            step = int(self.z_ch3_step_move_spbx.text())
+            current_position = self.device_pump.GetPosition(self.chan3)
+            new_pos = current_position - step
+            self.device_pump.MoveTo(self.chan3, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def z_set(self):
+        step_rate = int(self.z_ch3_step_spbx.text())
+        step_acc = int(self.z_ch3_acceleration_spbx.text())
+        self.device_settings.Drive.Channel(self.chan3).StepRate = step_rate
+        self.device_settings.Drive.Channel(self.chan3).StepAcceleration = step_acc
+        # Send settings to the device
+        self.device_pump.SetSettings(self.device_settings, True, True)
+    def z_move_to_thread(self):
+        thread = Thread(
+            target=self.z_move_to
+        )
+        thread.start()
+    def z_move_to(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            if self.is_number(self.z_ledit.text()):
+                if int(self.z_ledit.text()) != self.device_pump.GetPosition(self.chan3):
+                    new_pos = int(self.z_ledit.text())
+                    self.device_pump.MoveTo(self.chan3, new_pos, 60000) 
+                    self.z_ledit.clear()
+        pythoncom.CoUninitialize()
     '''Pump K-Cube Control'''
     def pump_signal(self):
         self.pump_connect_btn.clicked.connect(self.pump_connect_thread)
@@ -101,6 +200,70 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.pump_disconnect_btn.clicked.connect(self.pump_disconnect)
         self.pump_ch1_setzero_btn.clicked.connect(self.pump_ch1_setzero)
         self.pump_ch2_setzero_btn.clicked.connect(self.pump_ch2_setzero)
+        self.pump_ch1_forward_btn.pressed.connect(self.pump_ch1_forward_continuous_thread)
+        self.pump_ch1_backward_btn.pressed.connect(self.pump_ch1_backward_continuous_thread)
+        self.pump_ch2_forward_btn.pressed.connect(self.pump_ch2_forward_continuous_thread)
+        self.pump_ch2_backward_btn.pressed.connect(self.pump_ch2_backward_continuous_thread)
+        self.pump_ch1_forward_btn.released.connect(self.pump_ch1_stop)
+        self.pump_ch2_forward_btn.released.connect(self.pump_ch2_stop)
+        self.pump_ch1_backward_btn.released.connect(self.pump_ch1_stop)
+        self.pump_ch2_backward_btn.released.connect(self.pump_ch2_stop)
+    def pump_ch1_forward_continuous_thread(self):
+        thread = Thread(
+            target=self.pump_ch1_forward_continuous
+        )
+        thread.start()
+    def pump_ch1_forward_continuous(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            current_position = self.device_pump.GetPosition(self.chan1)
+            new_pos = current_position + 500000
+            self.device_pump.MoveTo(self.chan1, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def pump_ch2_forward_continuous_thread(self):
+        thread = Thread(
+            target=self.pump_ch2_forward_continuous
+        )
+        thread.start()
+    def pump_ch2_forward_continuous(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            current_position = self.device_pump.GetPosition(self.chan2)
+            new_pos = current_position + 500000
+            self.device_pump.MoveTo(self.chan2, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def pump_ch1_backward_continuous_thread(self):
+        thread = Thread(
+            target=self.pump_ch1_backward_continuous
+        )
+        thread.start()
+    def pump_ch1_backward_continuous(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            current_position = self.device_pump.GetPosition(self.chan1)
+            new_pos = current_position - 500000
+            self.device_pump.MoveTo(self.chan1, new_pos, 60000) 
+        pythoncom.CoUninitialize()
+    def pump_ch2_backward_continuous_thread(self):
+        thread = Thread(
+            target=self.pump_ch2_backward_continuous
+        )
+        thread.start()
+    def pump_ch2_backward_continuous(self):
+        pythoncom.CoInitialize()
+        if self.device_pump.IsAnyChannelMoving():
+            pass
+        else:
+            current_position = self.device_pump.GetPosition(self.chan2)
+            new_pos = current_position - 500000
+            self.device_pump.MoveTo(self.chan2, new_pos, 60000) 
+        pythoncom.CoUninitialize()
     def pump_ch1_setzero(self):
         self.device_pump.SetPositionAs(self.chan1, 0)
     def pump_ch2_setzero(self):
@@ -205,15 +368,15 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                     self.pump_ch2_ledit.clear()
         pythoncom.CoUninitialize()            
     def pump_ch1_set(self):
+        step_acc = int(self.pump_ch1_acceleration_spbx.text())
         step_rate = int(self.pump_ch1_step_spbx.text())
-        step_acc = int(self.pump_ch1_step_spbx.text())
         self.device_settings.Drive.Channel(self.chan1).StepRate = step_rate
         self.device_settings.Drive.Channel(self.chan1).StepAcceleration = step_acc
         # Send settings to the device
         self.device_pump.SetSettings(self.device_settings, True, True)
     def pump_ch2_set(self):
+        step_acc = int(self.pump_ch2_acceleration_spbx.text())
         step_rate = int(self.pump_ch2_step_spbx.text())
-        step_acc = int(self.pump_ch2_step_spbx.text())
         self.device_settings.Drive.Channel(self.chan2).StepRate = step_rate
         self.device_settings.Drive.Channel(self.chan2).StepAcceleration = step_acc
         # Send settings to the device
@@ -239,13 +402,14 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.device_pump.EnableDevice()
         time.sleep(0.25)  # Wait for self.device_a to enable.
         device_info = self.device_pump.GetDeviceInfo()
-        print(device_info.Description)
+        # print(device_info.Description)
         # Load any configuration settings needed by the controller/stage.
         inertial_motor_config = self.device_pump.GetInertialMotorConfiguration(serial_number)
         self.device_settings = ThorlabsInertialMotorSettings.GetSettings(inertial_motor_config)
         # Step parameters for an intertial motor channel
         self.chan1 = InertialMotorStatus.MotorChannels.Channel1  # enum chan ident
         self.chan2 = InertialMotorStatus.MotorChannels.Channel2  # enum chan ident
+        self.chan3 = InertialMotorStatus.MotorChannels.Channel3  # enum chan ident
 
         pythoncom.CoUninitialize()
         pump_position_view_thread = Thread(
@@ -260,6 +424,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                 
                 self.pump_ch1_position_view.display(int(self.device_pump.GetPosition(self.chan1)))
                 self.pump_ch2_position_view.display(int(self.device_pump.GetPosition(self.chan2)))
+                self.z_position_view.display(int(self.device_pump.GetPosition(self.chan3)))
                 time.sleep(0.2)
             else:
                 break
@@ -281,10 +446,10 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.x_minus_btn.released.connect(self.ax1_stop)
 
         # axis 2 signal
-        self.ax2_on_btn.clicked.connect(self.ax2_on)
-        self.ax2_off_btn.clicked.connect(self.ax2_off)
-        self.ax2_cap_meas_btn.clicked.connect(self.ax2_capacity_measure)
-        self.ax2_set_btn.clicked.connect(self.ax2_freq_vol_set)
+        # self.ax2_on_btn.clicked.connect(self.ax2_on)
+        # self.ax2_off_btn.clicked.connect(self.ax2_off)
+        # self.ax2_cap_meas_btn.clicked.connect(self.ax2_capacity_measure)
+        # self.ax2_set_btn.clicked.connect(self.ax2_freq_vol_set)
 
         self.y_plus_btn.clicked.connect(self.ax2_stp_plus)
         self.y_minus_btn.clicked.connect(self.ax2_stp_minus)
@@ -305,8 +470,10 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.anc300 = serial.Serial(comport,115200,timeout=1)
     def ax1_on(self):
         self.anc300.write(b'setm 1 stp \r\n')
+        self.anc300.write(b'setm 2 stp \r\n')
     def ax1_off(self):
         self.anc300.write(b'setm 1 gnd \r\n')
+        self.anc300.write(b'setm 2 gnd \r\n')
     def ax1_capacity_measure(self):
         self.anc300.write(b'getc 1 \r\n')
         while True:
@@ -323,11 +490,32 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             else:
                 break
         self.anc300.write(b'capw 1 \r\n')
+        self.anc300.write(b'getc 2 \r\n')
+        while True:
+            response = self.anc300.readlines()
+            if response:
+                for line in response:
+                    line = str(line.rstrip(),'utf-8')              
+                    if line[0:22] == 'capacitance':
+                        
+                        line = str(line)
+                        index = line.index('=')
+                        self.ax2_cap_ledit.setText(line[index+2:index+7])
+                    
+            else:
+                break
+        self.anc300.write(b'capw 2 \r\n')
+
     def ax1_freq_vol_set(self):
         freq = int(self.ax1_freq_spbx.text())
         vol = int(self.ax1_vol_spbx.text())
         freq_signal = 'setf 1 {} \r\n'.format(freq)
         vol_signal = 'setv 1 {} \r\n'.format(vol)
+        rtn = self.anc300.write(freq_signal.encode())
+        rtn = self.anc300.write(vol_signal.encode())
+        
+        freq_signal = 'setf 2 {} \r\n'.format(freq)
+        vol_signal = 'setv 2 {} \r\n'.format(vol)
         rtn = self.anc300.write(freq_signal.encode())
         rtn = self.anc300.write(vol_signal.encode())
     def ax1_stp_plus(self):
@@ -344,34 +532,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         # rtn = self.anc300.write(b'stepw 1 \r\n')
     def ax1_stop(self):
         rtn = self.anc300.write(b'stop 1 \r\n')
-
-    def ax2_on(self):
-        self.anc300.write(b'setm 2 stp \r\n')
-    def ax2_off(self):
-        self.anc300.write(b'setm 2 gnd \r\n')
-    def ax2_capacity_measure(self):
-        self.anc300.write(b'getc 2 \r\n')
-        while True:
-            response = self.anc300.readlines()
-            if response:
-                for line in response:
-                    line = str(line.rstrip(),'utf-8')              
-                    if line[0:22] == 'capacitance':
-                        
-                        line = str(line)
-                        index = line.index('=')
-                        self.ax2_cap_ledit.setText(line[index+2:index+7])
-                    
-            else:
-                break
-        self.anc300.write(b'capw 2 \r\n')
-    def ax2_freq_vol_set(self):
-        freq = int(self.ax2_freq_spbx.text())
-        vol = int(self.ax2_vol_spbx.text())
-        freq_signal = 'setf 2 {} \r\n'.format(freq)
-        vol_signal = 'setv 2 {} \r\n'.format(vol)
-        rtn = self.anc300.write(freq_signal.encode())
-        rtn = self.anc300.write(vol_signal.encode())
+        
     def ax2_stp_plus(self):
         rtn = self.anc300.write(b'stepd 2 1 \r\n')
         rtn = self.anc300.write(b'stepw 2 \r\n')
