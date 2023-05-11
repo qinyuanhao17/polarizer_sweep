@@ -1015,7 +1015,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.setCursor(QCursor(Qt.ArrowCursor))
     
     def closeEvent(self, event):
-        
+        self.anc300.write(b'setm 1 gnd \r\n')
+        self.anc300.write(b'setm 2 gnd \r\n')
         self.device_a.StopImmediate()
         self.device_a.StopPolling()
         self.device_a.Disconnect(True)
