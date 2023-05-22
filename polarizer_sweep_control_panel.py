@@ -435,7 +435,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.ax1_on_btn.clicked.connect(self.ax1_on)
         self.ax1_off_btn.clicked.connect(self.ax1_off)
         self.anc300_connect_btn.clicked.connect(self.anc_connect)
-        self.ax1_cap_meas_btn.clicked.connect(self.ax1_capacity_measure)
+        self.ax1_cap_meas_btn.clicked.connect(self.ax1_capacity_measure_thread)
         self.ax1_set_btn.clicked.connect(self.ax1_freq_vol_set)
 
         self.x_plus_btn.clicked.connect(self.ax1_stp_plus)
@@ -457,6 +457,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.y_minus_btn.pressed.connect(self.ax2_continue_minus)
         self.y_plus_btn.released.connect(self.ax2_stop)
         self.y_minus_btn.released.connect(self.ax2_stop)
+        self.ax1_cap_stop_btn.clicked.connect(self.ax1_cap_stop)
     def anc_comport_read(self):
         rs = list(lp.comports())
         for item in rs:
@@ -474,38 +475,61 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
     def ax1_off(self):
         self.anc300.write(b'setm 1 gnd \r\n')
         self.anc300.write(b'setm 2 gnd \r\n')
+    def ax1_cap_stop(self):
+        self.capConstant = False
+        self.ax1_cap_ledit.clear()
+        self.ax2_cap_ledit.clear()
+    def ax1_capacity_measure_thread(self):
+        thread = Thread(
+            target= self.ax1_capacity_measure
+        )
+        thread.start()
     def ax1_capacity_measure(self):
-        self.anc300.write(b'getc 1 \r\n')
+        pythoncom.CoInitialize()
+        self.capConstant = True
+        
         while True:
-            response = self.anc300.readlines()
-            if response:
-                for line in response:
-                    line = str(line.rstrip(),'utf-8')              
-                    if line[0:11] == 'capacitance':
-                        
-                        line = str(line)
-                        index = line.index('=')
-                        self.ax1_cap_ledit.setText(line[index+2:index+7])
-                    
-            else:
+            # print(self.capConstant)
+            if self.capConstant:
+                self.anc300.write(b'getc 1 \r\n')
+                while True:
+                    response = self.anc300.readlines()
+                    if response:
+                        for line in response:
+                            line = str(line.rstrip(),'utf-8')    
+                                
+                            if line[0:11] == 'capacitance':
+                                
+                                line = str(line)
+                                index = line.index('=')
+                                self.ax1_cap_ledit.setText(line[index+2:index+7])
+                                
+                            
+                    else:
+                        break
+                self.anc300.write(b'capw 1 \r\n')
+                self.anc300.write(b'getc 2 \r\n')
+                while True:
+                    response = self.anc300.readlines()
+                    if response:
+                        for line in response:
+                            line = str(line.rstrip(),'utf-8')   
+                                    
+                            if line[0:11] == 'capacitance':
+                                
+                                line = str(line)
+                                index = line.index('=')
+                                self.ax2_cap_ledit.setText(line[index+2:index+7])
+                                
+                            
+                    else:
+                        break
+                self.anc300.write(b'capw 2 \r\n')
+                
+                
+            else: 
                 break
-        self.anc300.write(b'capw 1 \r\n')
-        self.anc300.write(b'getc 2 \r\n')
-        while True:
-            response = self.anc300.readlines()
-            if response:
-                for line in response:
-                    line = str(line.rstrip(),'utf-8')              
-                    if line[0:22] == 'capacitance':
-                        
-                        line = str(line)
-                        index = line.index('=')
-                        self.ax2_cap_ledit.setText(line[index+2:index+7])
-                    
-            else:
-                break
-        self.anc300.write(b'capw 2 \r\n')
-
+        pythoncom.CoUninitialize()
     def ax1_freq_vol_set(self):
         freq = int(self.ax1_freq_spbx.text())
         vol = int(self.ax1_vol_spbx.text())
@@ -1072,7 +1096,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         b_step = float(self.rotator_b_sweepstep_spbx.text())
         b_stime = float(self.rotator_b_stime_spbx.text())
         tot_frame = int((b_stop_position - b_start_position)/b_step+1)
-
+        print('123')
         with nidaqmx.Task() as read_task, nidaqmx.Task() as write_task:
     
             di = read_task.di_channels.add_di_chan("Dev1/port0/line1")
@@ -1090,6 +1114,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                             write_task.write(True)
                             time.sleep(0.25)
                             write_task.write(False)
+                            print('TTL writed')
                             time.sleep(b_stime+2)             
                             self.rotator_b_info.emit('{}'.format(i))
                             if i == tot_frame:

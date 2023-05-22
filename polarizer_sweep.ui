@@ -371,7 +371,7 @@ QPushButton:pressed {
                 <enum>QTabWidget::Triangular</enum>
                </property>
                <property name="currentIndex">
-                <number>1</number>
+                <number>0</number>
                </property>
                <property name="iconSize">
                 <size>
@@ -754,7 +754,7 @@ QPushButton:pressed {
                  <item>
                   <widget class="QGroupBox" name="groupBox_2">
                    <property name="title">
-                    <string>Polarization Sweep</string>
+                    <string>Polarization Mappping</string>
                    </property>
                    <property name="checkable">
                     <bool>true</bool>
@@ -1342,7 +1342,7 @@ QProgressBar::chunk {
                  <item>
                   <widget class="QGroupBox" name="groupBox_4">
                    <property name="title">
-                    <string>Polarization Sweep</string>
+                    <string>Power Mapping</string>
                    </property>
                    <property name="checkable">
                     <bool>true</bool>
@@ -2402,6 +2402,23 @@ QProgressBar::chunk {
                       </property>
                      </widget>
                     </item>
+                   </layout>
+                  </item>
+                  <item>
+                   <layout class="QHBoxLayout" name="horizontalLayout_19">
+                    <item>
+                     <spacer name="horizontalSpacer_11">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
                     <item>
                      <widget class="QPushButton" name="ax1_cap_meas_btn">
                       <property name="sizePolicy">
@@ -2412,6 +2429,19 @@ QProgressBar::chunk {
                       </property>
                       <property name="text">
                        <string> Meas </string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="ax1_cap_stop_btn">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="text">
+                       <string>Stop</string>
                       </property>
                      </widget>
                     </item>
