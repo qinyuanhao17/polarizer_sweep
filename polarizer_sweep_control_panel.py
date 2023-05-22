@@ -491,6 +491,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         while True:
             # print(self.capConstant)
             if self.capConstant:
+                self.anc300.write(b'setm 1 cap \r\n')
+                self.anc300.write(b'capw 1 \r\n')
                 self.anc300.write(b'getc 1 \r\n')
                 while True:
                     response = self.anc300.readlines()
@@ -507,7 +509,9 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                             
                     else:
                         break
-                self.anc300.write(b'capw 1 \r\n')
+                
+                self.anc300.write(b'setm 2 cap \r\n')
+                self.anc300.write(b'capw 2 \r\n')
                 self.anc300.write(b'getc 2 \r\n')
                 while True:
                     response = self.anc300.readlines()
@@ -524,7 +528,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                             
                     else:
                         break
-                self.anc300.write(b'capw 2 \r\n')
+                
                 
                 
             else: 
