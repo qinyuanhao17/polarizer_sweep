@@ -40,8 +40,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         
         # init UI
         self.setupUi(self)
-        self.ui_width = int(QDesktopWidget().availableGeometry().size().width()*0.76)
-        self.ui_height = int(QDesktopWidget().availableGeometry().size().height()*0.55)
+        self.ui_width = int(QDesktopWidget().availableGeometry().size().width()*0.85)
+        self.ui_height = int(QDesktopWidget().availableGeometry().size().height()*0.62)
         self.resize(self.ui_width, self.ui_height)
         center_pointer = QDesktopWidget().availableGeometry().center()
         x = center_pointer.x()
@@ -444,7 +444,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.x_minus_btn.pressed.connect(self.ax1_continue_minus)
         self.x_plus_btn.released.connect(self.ax1_stop)
         self.x_minus_btn.released.connect(self.ax1_stop)
-
+        self.ax1_freq_spbx.valueChanged.connect(self.ax1_freq_vol_set)
+        self.ax1_vol_spbx.valueChanged.connect(self.ax1_freq_vol_set)
         # axis 2 signal
         # self.ax2_on_btn.clicked.connect(self.ax2_on)
         # self.ax2_off_btn.clicked.connect(self.ax2_off)
