@@ -85,6 +85,59 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.pump_signal()
         '''z K-Cube Signal'''
         self.z_signal()
+        '''Sudo mapping signal'''
+        self.sudo_mapping_signal()
+    def sudo_mapping_signal(self):
+        self.test_stepx_btn.clicked.connect(self.test_step_x)
+        self.test_stepy_btn.clicked.connect(self.test_step_y)
+        self.return_stepx_btn.clicked.connect(self.test_step_x_return)
+        self.return_stepy_btn.clicked.connect(self.test_step_y_return)
+        self.sudo_mapping_calc_btn.clicked.connect(self.sudo_mapping_calc_frame)
+    def sudo_mapping_calc_frame(self):
+        stepx = int(self.stepx_spbx.text())
+        stepy = int(self.stepy_spbx.text())
+        tot_frame = (stepx+1)*(stepy+1)
+        self.sudo_mapping_frame_spbx.setValue(tot_frame)
+    def test_step_x(self):
+        thread = Thread(
+            target=self.test_step_x_thread
+        )
+        thread.start()
+    def test_step_x_thread(self):
+        stepx = int(self.test_stepx_spbx.text())
+        move = 'stepu 1 {} \r\n'.format(stepx)
+        rtn = self.anc300.write(move.encode('utf-8'))
+        rtn = self.anc300.write(b'stepw 1 \r\n')
+    def test_step_y(self):
+        thread = Thread(
+            target=self.test_step_y_thread
+        )
+        thread.start()
+    def test_step_y_thread(self):
+        stepy = int(self.test_stepy_spbx.text())
+        move = 'stepd 2 {} \r\n'.format(stepy)
+        rtn = self.anc300.write(move.encode('utf-8'))
+        rtn = self.anc300.write(b'stepw 2 \r\n')
+    def test_step_x_return(self):
+        thread = Thread(
+            target=self.test_step_x_return_thread
+        )
+        thread.start()
+    def test_step_x_return_thread(self):
+        stepx = int(self.test_stepx_spbx.text())
+        move = 'stepd 1 {} \r\n'.format(stepx)
+        rtn = self.anc300.write(move.encode('utf-8'))
+        rtn = self.anc300.write(b'stepw 1 \r\n')
+    def test_step_y_return(self):
+        thread = Thread(
+            target=self.test_step_y_return_thread
+        )
+        thread.start()
+    def test_step_y_return_thread(self):
+        stepy = int(self.test_stepy_spbx.text())
+        move = 'stepu 2 {} \r\n'.format(stepy)
+        rtn = self.anc300.write(move.encode('utf-8'))
+        rtn = self.anc300.write(b'stepw 2 \r\n')
     def z_signal(self):
         self.z_ch3_set_btn.clicked.connect(self.z_set)
         self.z_ledit.returnPressed.connect(self.z_move_to_thread)
