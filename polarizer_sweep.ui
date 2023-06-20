@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2111</width>
-    <height>1212</height>
+    <width>2115</width>
+    <height>1221</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -962,7 +962,7 @@ QProgressBar::chunk {
                          <x>0</x>
                          <y>0</y>
                          <width>574</width>
-                         <height>85</height>
+                         <height>69</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -1550,7 +1550,7 @@ QProgressBar::chunk {
                          <x>0</x>
                          <y>0</y>
                          <width>574</width>
-                         <height>85</height>
+                         <height>69</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -3222,6 +3222,29 @@ QProgressBar::chunk {
                   <size>
                    <width>20</width>
                    <height>30</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="sudo_mapping_stop_btn">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="resources.qrc">
+                   <normaloff>:/my_icons/images/icons/stop_rotate.svg</normaloff>:/my_icons/images/icons/stop_rotate.svg</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>40</width>
+                   <height>40</height>
                   </size>
                  </property>
                 </widget>

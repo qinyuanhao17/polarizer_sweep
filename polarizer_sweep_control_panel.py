@@ -93,6 +93,8 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.return_stepx_btn.clicked.connect(self.test_step_x_return)
         self.return_stepy_btn.clicked.connect(self.test_step_y_return)
         self.sudo_mapping_calc_btn.clicked.connect(self.sudo_mapping_calc_frame)
+        self.sudo_mapping_stop_btn.clicked.connect(self.ax1_stop)
+        self.sudo_mapping_stop_btn.clicked.connect(self.ax2_stop)
     def sudo_mapping_calc_frame(self):
         stepx = int(self.stepx_spbx.text())
         stepy = int(self.stepy_spbx.text())
@@ -115,7 +117,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         thread.start()
     def test_step_y_thread(self):
         stepy = int(self.test_stepy_spbx.text())
-        move = 'stepd 2 {} \r\n'.format(stepy)
+        move = 'stepu 2 {} \r\n'.format(stepy)
         rtn = self.anc300.write(move.encode('utf-8'))
         rtn = self.anc300.write(b'stepw 2 \r\n')
     def test_step_x_return(self):
@@ -135,7 +137,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         thread.start()
     def test_step_y_return_thread(self):
         stepy = int(self.test_stepy_spbx.text())
-        move = 'stepu 2 {} \r\n'.format(stepy)
+        move = 'stepd 2 {} \r\n'.format(stepy)
         rtn = self.anc300.write(move.encode('utf-8'))
         rtn = self.anc300.write(b'stepw 2 \r\n')
     def z_signal(self):
