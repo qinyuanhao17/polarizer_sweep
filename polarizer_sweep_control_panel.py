@@ -104,6 +104,75 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.sudo_mapping_go_btn.clicked.connect(self.sudo_mapping_goto_position)
         self.return_sudo_mapping_btn.clicked.connect(self.return_sudo_mapping)
         self.sudo_mapping_interrupt_btn.clicked.connect(self.sudo_mapping_interrupt)
+        self.continue_sudo_mapping_btn.clicked.connect(self.continue_sudo_mapping)
+    def continue_sudo_mapping(self):
+        thread = Thread(
+            target=self.continue_sudo_mapping_thread
+        )
+    def continue_sudo_mapping_thread(self):
+        pythoncom.CoInitialize()
+        stepx = int(self.stepx_spbx.value())
+        stepy = int(self.stepx_spbx.value())
+        stime = float(self.sudo_mapping_stime_spbx.text())
+        tot_frame = (stepx+1)*(stepy+1)
+
+        with nidaqmx.Task() as read_task, nidaqmx.Task() as write_task:
+    
+            di = read_task.di_channels.add_di_chan("Dev1/port0/line1")
+            do = write_task.do_channels.add_do_chan("Dev1/port0/line0")           
+            
+            
+            self.__sudoMappingStopConstant = False
+            self.iSudoMappping += 1
+            while self.iSudoMappping < (tot_frame+1):
+                
+                if self.__sudoMappingStopConstant == False:
+                    self.sudo_mapping_progressbar_info.emit(self.iSudoMappping/tot_frame*100)
+                    
+                    data = read_task.read()
+                    if  data == False:    
+                        write_task.write(True)
+                        time.sleep(0.01)
+                        write_task.write(False)
+                        time.sleep(stime+1)             
+                        
+                        if self.iSudoMappping == tot_frame:
+                            move = 'stepd 1 {} \r\n'.format(stepx)
+                            rtn = self.anc300.write(move.encode('utf-8'))
+                            rtn = self.anc300.write(b'stepw 1 \r\n')    
+                            move = 'stepu 2 {} \r\n'.format(stepy)
+                            rtn = self.anc300.write(move.encode('utf-8'))
+                            rtn = self.anc300.write(b'stepw 1 \r\n')  
+                            self.stepxCount = 0
+                            self.stepyCount = 0
+                            break
+                        else:
+                            if self.iSudoMappping % math.isqrt(tot_frame) == 0:
+                                move = 'stepd 1 {} \r\n'.format(math.isqrt(tot_frame)-1)
+                                rtn = self.anc300.write(move.encode('utf-8'))
+                                rtn = self.anc300.write(b'stepw 1 \r\n')
+                                move = 'stepd 2 {} \r\n'.format(1)
+                                rtn = self.anc300.write(move.encode('utf-8'))
+                                rtn = self.anc300.write(b'stepw 2 \r\n')
+                                self.stepxCount = 0
+                                self.stepyCount += 1
+                                time.sleep(0.5)
+                            else:
+                                move = 'stepu 1 {} \r\n'.format(1)
+                                rtn = self.anc300.write(move.encode('utf-8'))
+                                rtn = self.anc300.write(b'stepw 1 \r\n')
+                                self.stepxCount += 1
+                                
+                                time.sleep(0.5)
+                                           
+                        self.iSudoMappping += 1
+                            
+                             
+                else:
+                    break 
+
+            
+        pythoncom.CoUninitialize()
     def sudo_mapping_interrupt(self):
         self.__sudoMappingStopConstant == True
     def return_sudo_mapping(self):
@@ -136,14 +205,14 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
             di = read_task.di_channels.add_di_chan("Dev1/port0/line1")
             do = write_task.do_channels.add_do_chan("Dev1/port0/line0")           
             
-            i = 1
+            self.iSudoMappping = 1
             self.__sudoMappingStopConstant = False
             self.stepxCount = 0
             self.stepyCount = 0
-            while i < (tot_frame+1):
+            while self.iSudoMappping < (tot_frame+1):
                 
                 if self.__sudoMappingStopConstant == False:
-                    self.sudo_mapping_progressbar_info.emit(i/tot_frame*100)
+                    self.sudo_mapping_progressbar_info.emit(self.iSudoMappping/tot_frame*100)
                     
                     data = read_task.read()
                     if  data == False:    
@@ -152,16 +221,18 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                         write_task.write(False)
                         time.sleep(stime+1)             
                         
-                        if i == tot_frame:
+                        if self.iSudoMappping == tot_frame:
                             move = 'stepd 1 {} \r\n'.format(stepx)
                             rtn = self.anc300.write(move.encode('utf-8'))
                             rtn = self.anc300.write(b'stepw 1 \r\n')    
                             move = 'stepu 2 {} \r\n'.format(stepy)
                             rtn = self.anc300.write(move.encode('utf-8'))
-                            rtn = self.anc300.write(b'stepw 1 \r\n')  
+                            rtn = self.anc300.write(b'stepw 1 \r\n') 
+                            self.stepxCount = 0
+                            self.stepyCount = 0 
                             break
                         else:
-                            if i % math.isqrt(tot_frame) == 0:
+                            if self.iSudoMappping % math.isqrt(tot_frame) == 0:
                                 move = 'stepd 1 {} \r\n'.format(math.isqrt(tot_frame)-1)
                                 rtn = self.anc300.write(move.encode('utf-8'))
                                 rtn = self.anc300.write(b'stepw 1 \r\n')
@@ -179,7 +250,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
                                 
                                 time.sleep(0.5)
                                            
-                        i += 1
+                        self.iSudoMappping += 1
                             
                              
                 else:
