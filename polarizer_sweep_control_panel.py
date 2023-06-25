@@ -6,6 +6,8 @@ import pythoncom
 import re
 import serial
 import polarizer_sweep_ui
+import numpy as np
+import math
 import serial.tools.list_ports as lp
 from threading import Thread
 from PyQt5.QtGui import QIcon, QPixmap, QCursor, QMouseEvent, QColor, QFont
@@ -34,6 +36,7 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
     rotator_a_progress_bar_info = pyqtSignal(float)
     rotator_b_info = pyqtSignal(str)
     rotator_b_progress_bar_info = pyqtSignal(float)
+    sudo_mapping_progressbar_info = pyqtSignal(float)
     def __init__(self):
 
         super().__init__()
@@ -87,6 +90,9 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.z_signal()
         '''Sudo mapping signal'''
         self.sudo_mapping_signal()
+        self.current_box = int(self.current_box_spbx.value())
+        self.stepxCount = 0
+        self.stepyCount = 0
     def sudo_mapping_signal(self):
         self.test_stepx_btn.clicked.connect(self.test_step_x)
         self.test_stepy_btn.clicked.connect(self.test_step_y)
@@ -95,51 +101,201 @@ class MyWindow(polarizer_sweep_ui.Ui_Form, QWidget):
         self.sudo_mapping_calc_btn.clicked.connect(self.sudo_mapping_calc_frame)
         self.sudo_mapping_stop_btn.clicked.connect(self.ax1_stop)
         self.sudo_mapping_stop_btn.clicked.connect(self.ax2_stop)
+        self.sudo_mapping_go_btn.clicked.connect(self.sudo_mapping_goto_position)
+        self.return_sudo_mapping_btn.clicked.connect(self.return_sudo_mapping)
+        self.sudo_mapping_interrupt_btn.clicked.connect(self.sudo_mapping_interrupt)
+    def sudo_mapping_interrupt(self):
+        self.__sudoMappingStopConstant == True
+    def return_sudo_mapping(self):
+        thread = Thread(
+            target=self.return_sudo_mapping_thread
+        )
+    def return_sudo_mapping_thread(self):
+        pythoncom.CoInitialize()
+        move = 'stepd 1 {} \r\n'.format(self.stepxCount)
+        rtn = self.anc300.write(move.encode('utf-8'))
+        rtn = self.anc300.write(b'stepw 1 \r\n') 
+        move = 'stepu 2 {} \r\n'.format(self.stepyCount)
+        rtn = self.anc300.write(move.encode('utf-8'))
+        rtn = self.anc300.write(b'stepw 1 \r\n') 
+        pythoncom.CoUninitialize() 
+
+    def start_sudo_mapping(self):
+        thread = Thread(
+            target=self.start_sudo_mapping_thread
+        )
+    def start_sudo_mapping_thread(self):
+        pythoncom.CoInitialize()
+        stepx = int(self.stepx_spbx.value())
+        stepy = int(self.stepx_spbx.value())
+        stime = float(self.sudo_mapping_stime_spbx.text())
+        tot_frame = (stepx+1)*(stepy+1)
+
+        with nidaqmx.Task() as read_task, nidaqmx.Task() as write_task:
+    
+            di = read_task.di_channels.add_di_chan("Dev1/port0/line1")
+            do = write_task.do_channels.add_do_chan("Dev1/port0/line0")           
+            
+            i = 1
+            self.__sudoMappingStopConstant = False
+            self.stepxCount = 0
+            self.stepyCount = 0
+            while i < (tot_frame+1):
+                
+                if self.__sudoMappingStopConstant == False:
+                    self.sudo_mapping_progressbar_info.emit(i/tot_frame*100)
+                    
+                    data = read_task.read()
+                    if  data == False:    
+                        write_task.write(True)
+                        time.sleep(0.01)
+                        write_task.write(False)
+                        time.sleep(stime+1)             
+                        
+                        if i == tot_frame:
+                            move = 'stepd 1 {} \r\n'.format(stepx)
+                            rtn = self.anc300.write(move.encode('utf-8'))
+                            rtn = self.anc300.write(b'stepw 1 \r\n')    
+                            move = 'stepu 2 {} \r\n'.format(stepy)
+                            rtn = self.anc300.write(move.encode('utf-8'))
+                            rtn = self.anc300.write(b'stepw 1 \r\n')  
+                            break
+                        else:
+                            if i % math.isqrt(tot_frame) == 0:
+                                move = 'stepd 1 {} \r\n'.format(math.isqrt(tot_frame)-1)
+                                rtn = self.anc300.write(move.encode('utf-8'))
+                                rtn = self.anc300.write(b'stepw 1 \r\n')
+                                move = 'stepd 2 {} \r\n'.format(1)
+                                rtn = self.anc300.write(move.encode('utf-8'))
+                                rtn = self.anc300.write(b'stepw 2 \r\n')
+                                self.stepxCount = 0
+                                self.stepyCount += 1
+                                time.sleep(0.5)
+                            else:
+                                move = 'stepu 1 {} \r\n'.format(1)
+                                rtn = self.anc300.write(move.encode('utf-8'))
+                                rtn = self.anc300.write(b'stepw 1 \r\n')
+                                self.stepxCount += 1
+                                
+                                time.sleep(0.5)
+                                           
+                        i += 1
+                            
+                             
+                else:
+                    break 
+
+            
+        pythoncom.CoUninitialize()
+    def sudo_mapping_goto_position(self):
+        thread = Thread(
+            target=self.sudo_mapping_goto_position_thread
+        )
+        thread.start()
+    def sudo_mapping_goto_position_thread(self):
+        pythoncom.CoInitialize()
+        if math.isqrt(int(self.boxnum_spbx.value()))**2 == int(self.boxnum_spbx.value()):
+            total_box_number = int(self.boxnum_spbx.value())
+            
+            self.current_box = int(self.current_box_spbx.value())
+            if (self.is_number(self.goto_ledit.text())) and (int(self.goto_ledit.text())<=total_box_number):
+                goto_box_number = int(self.goto_ledit.text())
+                stepx = int(self.stepx_spbx.value())
+                stepy = int(self.stepx_spbx.value())
+                x_box = math.isqrt(total_box_number)
+                y_box = math.isqrt(total_box_number)
+                box_array = np.arange(1,total_box_number+1).reshape(x_box,y_box)
+                if goto_box_number <= total_box_number:
+                    row_box_index = np.argwhere(box_array == goto_box_number)[0][0]
+                    col_box_index = np.argwhere(box_array == goto_box_number)[0][1]
+                    row_current_box_index = np.argwhere(box_array == self.current_box)[0][0]
+                    col_current_box_index = np.argwhere(box_array == self.current_box)[0][1]
+                    y_box_position = row_box_index - row_current_box_index
+                    x_box_position = col_box_index - col_current_box_index
+                x_move_steps = x_box_position * stepx
+                y_move_steps = y_box_position * stepy
+                if x_move_steps >= 0:
+                    move = 'stepu 1 {} \r\n'.format(x_move_steps)
+                    rtn = self.anc300.write(move.encode('utf-8'))
+                    rtn = self.anc300.write(b'stepw 1 \r\n')
+                else:
+                    move = 'stepd 1 {} \r\n'.format(abs(x_move_steps))
+                    rtn = self.anc300.write(move.encode('utf-8'))
+                    rtn = self.anc300.write(b'stepw 1 \r\n')
+                if y_move_steps >= 0:
+                    move = 'stepd 2 {} \r\n'.format(y_move_steps)
+                    rtn = self.anc300.write(move.encode('utf-8'))
+                    rtn = self.anc300.write(b'stepw 2 \r\n')   
+                else:
+                    move = 'stepu 2 {} \r\n'.format(abs(y_move_steps))
+                    rtn = self.anc300.write(move.encode('utf-8'))
+                    rtn = self.anc300.write(b'stepw 2 \r\n')   
+                
+                self.current_box_spbx.setValue(goto_box_number)
+            else:
+                self.goto_ledit.clear()
+                
+
+        else:
+            self.boxnum_spbx.clear()         
+          
+
+        pythoncom.CoUninitialize()
     def sudo_mapping_calc_frame(self):
         stepx = int(self.stepx_spbx.text())
         stepy = int(self.stepy_spbx.text())
         tot_frame = (stepx+1)*(stepy+1)
         self.sudo_mapping_frame_spbx.setValue(tot_frame)
     def test_step_x(self):
+        
         thread = Thread(
             target=self.test_step_x_thread
         )
         thread.start()
     def test_step_x_thread(self):
+        pythoncom.CoInitialize()
         stepx = int(self.test_stepx_spbx.text())
         move = 'stepu 1 {} \r\n'.format(stepx)
         rtn = self.anc300.write(move.encode('utf-8'))
         rtn = self.anc300.write(b'stepw 1 \r\n')
+        pythoncom.CoUninitialize()
     def test_step_y(self):
         thread = Thread(
             target=self.test_step_y_thread
         )
         thread.start()
     def test_step_y_thread(self):
+        pythoncom.CoInitialize()
         stepy = int(self.test_stepy_spbx.text())
         move = 'stepu 2 {} \r\n'.format(stepy)
         rtn = self.anc300.write(move.encode('utf-8'))
         rtn = self.anc300.write(b'stepw 2 \r\n')
+        pythoncom.CoUninitialize()
     def test_step_x_return(self):
+        
         thread = Thread(
             target=self.test_step_x_return_thread
         )
         thread.start()
     def test_step_x_return_thread(self):
+        pythoncom.CoInitialize()
         stepx = int(self.test_stepx_spbx.text())
         move = 'stepd 1 {} \r\n'.format(stepx)
         rtn = self.anc300.write(move.encode('utf-8'))
         rtn = self.anc300.write(b'stepw 1 \r\n')
+        pythoncom.CoUninitialize()
     def test_step_y_return(self):
         thread = Thread(
             target=self.test_step_y_return_thread
         )
         thread.start()
     def test_step_y_return_thread(self):
+        pythoncom.CoInitialize()
         stepy = int(self.test_stepy_spbx.text())
         move = 'stepd 2 {} \r\n'.format(stepy)
         rtn = self.anc300.write(move.encode('utf-8'))
         rtn = self.anc300.write(b'stepw 2 \r\n')
+        pythoncom.CoUninitialize()
     def z_signal(self):
         self.z_ch3_set_btn.clicked.connect(self.z_set)
         self.z_ledit.returnPressed.connect(self.z_move_to_thread)

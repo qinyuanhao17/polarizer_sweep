@@ -962,7 +962,7 @@ QProgressBar::chunk {
                          <x>0</x>
                          <y>0</y>
                          <width>574</width>
-                         <height>69</height>
+                         <height>73</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -1550,7 +1550,7 @@ QProgressBar::chunk {
                          <x>0</x>
                          <y>0</y>
                          <width>574</width>
-                         <height>69</height>
+                         <height>73</height>
                         </rect>
                        </property>
                        <layout class="QVBoxLayout" name="verticalLayout_21">
@@ -1579,7 +1579,7 @@ QProgressBar::chunk {
              <rect>
               <x>1140</x>
               <y>10</y>
-              <width>641</width>
+              <width>691</width>
               <height>261</height>
              </rect>
             </property>
@@ -2252,7 +2252,7 @@ QProgressBar::chunk {
               <x>630</x>
               <y>10</y>
               <width>501</width>
-              <height>511</height>
+              <height>531</height>
              </rect>
             </property>
             <property name="title">
@@ -3072,7 +3072,7 @@ QProgressBar::chunk {
              <rect>
               <x>1140</x>
               <y>280</y>
-              <width>641</width>
+              <width>691</width>
               <height>301</height>
              </rect>
             </property>
@@ -3261,69 +3261,6 @@ QProgressBar::chunk {
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_18">
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="1,1,1,1,1">
-                 <item>
-                  <widget class="QLabel" name="label_32">
-                   <property name="text">
-                    <string>BoxNum:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QDoubleSpinBox" name="stepx_spbx_2">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                   <property name="decimals">
-                    <number>0</number>
-                   </property>
-                   <property name="maximum">
-                    <double>2500.000000000000000</double>
-                   </property>
-                   <property name="stepType">
-                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
-                   </property>
-                   <property name="value">
-                    <double>16.000000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_34">
-                   <property name="text">
-                    <string>GoTo:</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="lineEdit">
-                   <property name="text">
-                    <string>1</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_12">
-                   <property name="orientation">
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
                 <layout class="QGridLayout" name="gridLayout_7">
                  <item row="0" column="0">
                   <widget class="QLabel" name="label_23">
@@ -3442,6 +3379,73 @@ QProgressBar::chunk {
                  </item>
                 </layout>
                </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="1,1,1,1,1">
+                 <item>
+                  <widget class="QLabel" name="label_32">
+                   <property name="text">
+                    <string>BoxNum:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="boxnum_spbx">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                   <property name="decimals">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <double>2500.000000000000000</double>
+                   </property>
+                   <property name="stepType">
+                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                   </property>
+                   <property name="value">
+                    <double>16.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_34">
+                   <property name="text">
+                    <string>GoTo:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLineEdit" name="goto_ledit">
+                   <property name="text">
+                    <string>1</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="sudo_mapping_go_btn">
+                   <property name="text">
+                    <string>GO</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="resources.qrc">
+                     <normaloff>:/my_icons/images/icons/enable.svg</normaloff>:/my_icons/images/icons/enable.svg</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>20</width>
+                     <height>30</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
               </layout>
              </item>
              <item>
@@ -3454,7 +3458,39 @@ QProgressBar::chunk {
              <item>
               <layout class="QVBoxLayout" name="verticalLayout_13">
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_22">
+                <layout class="QHBoxLayout" name="horizontalLayout_22" stretch="1,1,1,1,0,3">
+                 <item>
+                  <widget class="QLabel" name="label_35">
+                   <property name="text">
+                    <string>Current Box:</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="current_box_spbx">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                   </property>
+                   <property name="decimals">
+                    <number>0</number>
+                   </property>
+                   <property name="maximum">
+                    <double>2500.000000000000000</double>
+                   </property>
+                   <property name="stepType">
+                    <enum>QAbstractSpinBox::AdaptiveDecimalStepType</enum>
+                   </property>
+                   <property name="value">
+                    <double>1.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
                  <item>
                   <widget class="QPushButton" name="sudo_mapping_start_btn">
                    <property name="text">
@@ -3490,30 +3526,7 @@ QProgressBar::chunk {
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="sudo_mapping_confirm_btn">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Confirm</string>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="resources.qrc">
-                     <normaloff>:/my_icons/images/icons/confirm.svg</normaloff>:/my_icons/images/icons/confirm.svg</iconset>
-                   </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>25</width>
-                     <height>30</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QPushButton" name="sudo_mapping_return_btn">
+                  <widget class="QPushButton" name="return_sudo_mapping_btn">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -3529,18 +3542,16 @@ QProgressBar::chunk {
                    </property>
                    <property name="iconSize">
                     <size>
-                     <width>25</width>
+                     <width>20</width>
                      <height>30</height>
                     </size>
                    </property>
                   </widget>
                  </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QProgressBar" name="sudo_mapping_progressbar">
-                 <property name="styleSheet">
-                  <string notr="true">QProgressBar {
+                 <item>
+                  <widget class="QProgressBar" name="sudo_mapping_progressbar">
+                   <property name="styleSheet">
+                    <string notr="true">QProgressBar {
     border: 2px solid grey;
     background-color: #f0f0f0;
     padding: 1px;
@@ -3551,17 +3562,19 @@ QProgressBar::chunk {
     background-color: #00bcd4;
     width: 10px;
 }</string>
-                 </property>
-                 <property name="value">
-                  <number>0</number>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                 <property name="textDirection">
-                  <enum>QProgressBar::TopToBottom</enum>
-                 </property>
-                </widget>
+                   </property>
+                   <property name="value">
+                    <number>0</number>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignCenter</set>
+                   </property>
+                   <property name="textDirection">
+                    <enum>QProgressBar::TopToBottom</enum>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
              </item>
@@ -3581,7 +3594,4 @@ QProgressBar::chunk {
   <include location="resources.qrc"/>
  </resources>
  <connections/>
- <buttongroups>
-  <buttongroup name="buttonGroup"/>
- </buttongroups>
 </ui>
